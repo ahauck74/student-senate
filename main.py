@@ -1,6 +1,15 @@
 from flask import Flask, render_template, json, request, redirect, url_for
+from forms import RerecForm
+import mysql.connector
 
 app = Flask("Sprint2")
+
+mydb = mysql.connector.connect(
+  host="cs358.cis.valpo.edu",
+  user="senate",
+  password='358senate',
+  database="senate"
+)
 
 clubs = {"101":"Alliance", 
 		"102": "Federation of Authors", 
@@ -31,34 +40,31 @@ def new_submission():
 		
 	# read the posted values from the UI
 	else:
-		#The string in the bracket matches the field name in the html
-		_org_name = request.form['org_name'] 
-		_org_email = request.form['org_email']
-		_org_acronym = request.form['acronym']
-		
-		#These fields will need to become arrays once we dress up the html to have a 
-		#variable number of officer fields
-		_name = request.form['name'] 
-		_phone = request.form['phone'] 
-		_email = request.form['email'] 
-		_position = request.form['position']
-			
-		_cur_recgonized = request.form['currently_recognized']#returns <y> or <n>
-		_last_recognized = request.form['last_recognized']#This will likely be removed
-		_cur_tier = request.form['tier']#<1>, <2>, <3>, or <null> for unfunded
-		_change_tier = request.form['change_tier']#<y> or <n>
-		_tier_dest = request.form['tier_destination']#<1>, <2>, <3>, or <null> for unfunded
-		_description = request.form['description']
-		_events = request.form['events']
-		_attendance = request.form['reg_attendance']
-		_members = request.form['members_total']
-		
-		
-		# validate the received values
-		if _org_name and _org_email:
-		    return ("<h1>" + _org_name + "</h1>")
+		form = RerecForm(request)
+		errors = form.validate()
+		if (errors):
+			return(errors)
 		else:
-		    return (redirect(url_for('new')))
+			
+			mycursor = mydb.cursor()
+			sql = "INSERT INTO organizations (ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL) VALUES (%s, %s, %s, %s)"
+			
+			val = (form.org_name, form.org_acronym, form.description, form.org_email)
+			mycursor.execute(sql, val)
+			mydb.commit()
+			'''
+			sql = "INSERT INTO org_record (ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL) VALUES (%s, %s, %s, %s)"
+			
+			val = (form.org_name, self.org_acronym, self.description, self.org_email)
+			mycursor.execute(sql, val)
+			mydb.commit()
+			'''
+
+			print(mycursor.rowcount, "record inserted.")
+			
+			return("ready to commit to database")
+		
+
 
 ############################
 # The Club Pages
