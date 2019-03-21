@@ -40,9 +40,9 @@ def new_submission():
 		else:
 			
 			mycursor = mydb.cursor()
-			sql = "INSERT INTO organizations (ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL) VALUES (%s, %s, %s, %s)"
+			sql = "INSERT INTO organizations (ORG_LINK_NAME, ORG_NAME, ORG_ACR, ORG_EMAIL, TIER_REQUEST, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 			
-			val = (form.org_name, form.org_acronym, form.description, form.org_email)
+			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance)
 			mycursor.execute(sql, val)
 			mydb.commit()
 			'''
