@@ -1,0 +1,8 @@
+<! DOCTYPE html>
+<html>
+	<body>
+		{% for i in range(NAMES|length) %}
+			<pre>{{ NAMES[i] }}	{{ ACRS[i] }}	{{EMAILS[i]}}</pre>
+		{% endfor %}
+	</body>
+</html>

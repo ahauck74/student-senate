@@ -30,7 +30,7 @@ class RerecForm:
 		
 		
 	def get_org_link(self):
-		return org_name.replace(" ","-")
+		return self.org_name.replace(" ","-")
 		
 	def validate(self):
 		error_message = ''
@@ -39,10 +39,10 @@ class RerecForm:
 		if not (self.org_email):
 			error_message += "Missing organization email.\n"
 		#TODO: Check if valid email using regex, and possibly add other validation requirements
-		if not isinstance(self.num_officers, int):
+		'''if not isinstance(self.num_officers, int):
 			error_message += ("Number of officers needs to be an integer, instead got " + self.num_officers + ".\n")
 		if not isinstance(self.num_advisors, int):
-			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")
+			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
 		if (self.change_tier == 'y' and not self.tier_dest):
 			error_message += "Missing tier destination. Please select a tier or set change tier to no.\n"
 		if len(error_message) == 0:
