@@ -1,0 +1,146 @@
+<html>
+   <body>
+<form action = "http://cs358.cis.valpo.edu:5000/new-rerec-submission/{{ID}}" method = "post">
+    <fieldset>
+        <h2>Re-recognition Form <br><small>This form is for Currently Recognized Student Organizations of Valparaiso University. To continue to be a university recognized student organization of Valparaiso University for Spring 2019 and Fall 2020 Organizations must complete this form by Friday February 1st. Those who fail to fill out this form will no longer be recognized by the University and hence forth be unable to reserve university spaces, receive funding from student senate etc. Please fill this form out with detail and to the fullest of your ability. Responses that the Student Senate Administration Committee deems to not be completed well enough will not be accepted. If you show effort and answer the questions with detail there will not be an issue.</small></h2>
+    </fieldset>
+
+
+    <!-- Field type: "short" id: "452929374" -->
+    <fieldset>
+        <legend for="452929374">Organization Name</legend>
+        <div class="form-group">
+            <input id="1882656793" type="text" name="org_name" class="form-control"  value={{NAME}}>
+        </div>
+    </fieldset>
+
+
+    <!-- Field type: "short" id: "2038927661" -->
+    <fieldset>
+        <legend for="2038927661">Official organization email (MUST be a valpo.edu email). </legend>
+        <div class="form-group">
+            <input id="1314376269" type="text" name="org_email" class="form-control" value={{EMAIL}}>
+        </div>
+    </fieldset>
+    
+    <fieldset>
+        <legend for="2038927662">Shortened Organization Name or Acronym </legend>
+        <div class="form-group">
+            <input id="1314376268" type="text" name="acronym" class="form-control" value={{ACR}}>
+        </div>
+    </fieldset>
+
+
+    
+        <fieldset>
+    	<legend for="687977312">Is your organization currently recognized?</legend>
+    	<select name="currently_recognized">
+			<option value="y">Yes</option>
+			<option value="n">No</option>
+	  </select>
+    </fieldset>
+
+
+    <!-- Field type: "short" id: "218750409" -->
+    <fieldset>
+        <legend for="218750409">If &quot;No&quot;. When was the most recent year your organization was university recognized?</legend>
+        <div class="form-group">
+            <input id="298238696" type="text" name="last_recognized" class="form-control" >
+        </div>
+    </fieldset>
+
+    
+    <fieldset>
+    <legend for="1538021864">What tier is your organization currently in?</legend>
+    	<select name="tier">
+			<option value="1">Tier 1</option>
+			<option value="2">Tier 2</option>
+			<option value="3">Tier 3</option>
+			<option value=null>Unfunded</option>
+	  </select>
+    </fieldset>
+
+
+    <!-- Field type: "choices" id: "1585742074" -->
+    <fieldset>
+        <legend for="1585742074">Do you wish to move tiers?</legend>
+        <select name="change_tier">
+			<option value="n">No</option>
+			<option value="y">Yes</option>
+	  </select>
+    </fieldset>
+
+
+    <!-- Field type: "short" id: "653058237" -->
+    <fieldset>
+        <legend for="653058247">If &quot;Yes&quot;, which tier?</legend>
+        <select name="tier_destination">
+			<option value="1">Tier 1</option>
+			<option value="2">Tier 2</option>
+			<option value="3">Tier 3</option>
+			<option value=null>Unfunded</option>
+	  </select>
+    </fieldset>
+
+
+    <!-- Field type: "paragraph" id: "804273304" -->
+    <fieldset>
+        <legend for="804273304">Please give a description of your organization. What is the purpose of your organization? What do you hope your members gain from being in your organization? What do you believe your organization gives to the greater Valparaiso University Community?</legend>
+        <div class="form-group">
+            <textarea id="1536909263" name="description" class="form-control" ></textarea>
+        </div>
+    </fieldset>
+
+
+    <!-- Field type: "paragraph" id: "1956583147" -->
+    <fieldset>
+        <legend for="1956583147">Please give a description of your organizations 5 most important events. (Fundraising, philanthropy, conferences, tournaments etc.)</legend>
+        <div class="form-group">
+            <textarea id="227861700" name="events" class="form-control" ></textarea>
+        </div>
+    </fieldset>
+
+
+    <!-- Field type: "short" id: "2031252226" -->
+    <fieldset>
+        <legend for="2031252226">How many members do you have attend your meetings? </legend>
+        <div class="form-group">
+            <input id="74392380" type="text" name="reg_attendance" class="form-control" >
+        </div>
+    </fieldset>
+    
+    <fieldset>
+        <legend for="2031252227">How many members are in your organization?</legend>
+        <div class="form-group">
+            <input id="74392381" type="text" name="members_total" class="form-control" >
+        </div>
+    </fieldset>
+    
+    <fieldset>
+        <legend for="2031252228">How many officers are in your organization?</legend>
+        <div class="form-group">
+            <input id="74392382" type="text" name="num_officers" class="form-control" >
+        </div>
+    </fieldset>
+    
+    <fieldset>
+        <legend for="2031252229">How many advisors are in your organization?</legend>
+        <div class="form-group">
+            <input id="74392383" type="text" name="num_advisors" class="form-control" >
+        </div>
+    </fieldset>
+
+    <input type="hidden" name="fvv" value="1">
+    <input type="hidden" name="fbzx" value="8331794832937362373">
+    <!--
+        CAVEAT: In multipages (multisection) forms, *pageHistory* field tells to google what sections we've currently completed.
+        This usually starts as "0" for the first page, then "0,1" in the second page... up to "0,1,2..N" in n-th page.
+        Keep this in mind if you plan to change this code to recreate any sort of multipage-feature in your exported form.
+        We're setting this to the total number of pages in this form because we're sending all fields from all the section together.
+    -->
+    <input type="hidden" name="pageHistory" value="0">
+
+    <input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
+</form>
+ </body>
+</html>

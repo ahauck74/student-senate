@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, request, redirect, url_for, abort
-from forms import RerecForm
+from forms import RerecForm, RecForm
 import mysql.connector
 
 app = Flask("Sprint2")
@@ -11,25 +11,99 @@ mydb = mysql.connector.connect(
   database="senate"
 )
 
+##########################################
+# The Homepage
+##########################################
 @app.route("/")
+@app.route("/home")
+
 def homepage():
 	return render_template("homepage.html")
 
 ##########################################
 # The Recognition Form
 ##########################################
-@app.route("/new", methods=['POST', 'GET'])
-def new():
-	return render_template("new_submission.html")
-
+@app.route("/new-rec", methods=['POST', 'GET'])
+def new_rec():
+	
+	
+	return render_template("recognition_form.html")
+	
 ##########################################
 # The Submit Button For the Rec Form
 ##########################################
-@app.route("/new-submission", methods=['POST', 'GET'])
-def new_submission():
+@app.route("/new-rec-submission", methods=['POST', 'GET'])
+def new_rec_submission():
 	#If the user tries to access this page by means other than the submit button, they are redirected to the form
 	if request.method == "GET":
-		return render_template("new_submission.html") 
+		return render_template("recognition_form.html") 
+		
+	# read the posted values from the UI
+	else:
+		form = RecForm(request)
+		errors = form.validate()
+		if (errors):
+			return(errors)
+		else:
+			
+			
+			mycursor = mydb.cursor()
+			sql = "INSERT INTO organizations (ORG_LINK_NAME, ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+			
+			
+			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance, form.ORG_ID)
+			mycursor.execute(sql, val)
+			mydb.commit()
+
+			print(mycursor.rowcount, "record inserted.")
+			return ("Updated database") #TODO: Render org template for the org that was updated, maybe...
+
+##########################################
+# Wait... Who are you?
+##########################################
+@app.route("/new-rerec", methods=['POST', 'GET'])
+def who_rerec():	
+			
+	if request.method == "GET":
+		mycursor = mydb.cursor()
+		mycursor.execute("SELECT ORG_NAME, ORG_ID FROM organizations")
+		org_name_list = mycursor.fetchall()
+		
+		#TODO: The below code is a VERY roundabout way of formatting this list properly. The original fetchall  using just the org_name returns a list of tuples that looks like [('name1,'), ('name2,')... etc with the commas stuck there. This should be fixed.
+		names, IDs = [], []
+		for row in org_name_list:
+			name, ID = row
+			names.append(name)
+			IDs.append(ID)
+		
+		return render_template("org_selection_form.html", ORGS = names, ) 
+		
+	else:
+		mycursor = mydb.cursor()
+		mycursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID FROM organizations WHERE ORG_NAME = '" + str(request.form['org']) + "'" )
+		fetch = mycursor.fetchall()
+		#return(str(fetch[0]))
+		return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3])
+			
+		
+##########################################
+# The Re-Recognition Form
+##########################################
+'''
+@app.route("/new-rerec/", methods=['POST', 'GET'])
+def new_rerec():
+	
+	return render_template("rerecognition_form.html") 
+	'''
+
+##########################################
+# The Submit Button For the Re-Rec Form
+##########################################
+@app.route("/new-rerec-submission/<ID>", methods=['POST', 'GET'])
+def new_submission_rerec(ID):
+	#If the user tries to access this page by means other than the submit button, they are redirected to the form
+	if request.method == "GET":
+		return render_template("rerecognition_form.html", ID=ID) 
 		
 	# read the posted values from the UI
 	else:
@@ -40,14 +114,24 @@ def new_submission():
 		else:
 			
 			mycursor = mydb.cursor()
-			sql = "INSERT INTO organizations (ORG_LINK_NAME, ORG_NAME, ORG_ACR, ORG_EMAIL, TIER_REQUEST, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+			#TODO: Update the database
+			sql_update_query = """UPDATE organizations SET ORG_LINK_NAME = %s, ORG_NAME= %s, ORG_ACR= %s, ORG_EMAIL= %s, TIER_REQUEST= %s, ORG_DESCRIPTION= %s, CONSTITUTION= %s, ORG_MEMBERS= %s, ORG_ATTENDING_MEMBERS= %s WHERE ORG_ID = %s"""
 			
-			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance)
-			mycursor.execute(sql, val)
+			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, ID)
+			mycursor.execute(sql_update_query, val)
 			mydb.commit()
 
 			print(mycursor.rowcount, "record inserted.")
-			return("ready to commit to database")
+			return ("Insderted into the database") #TODO: Render the template for the org that just submitted, maybe...
+
+##########################################
+# The Advisor/Officer Change Form
+##########################################
+@app.route("/advisor-officer-change", methods=['POST', 'GET'])
+def new():
+	return render_template("advisor_officer_change_form.html") 
+
+
 		
 ##########################################
 # The Org List
@@ -58,7 +142,7 @@ def org_list():
 	cursor = mydb.cursor()
 	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL FROM organizations")
 	rows = cursor.fetchall()
-	
+	#return str(rows)
 	names = []
 	ACRs = []
 	emails = []

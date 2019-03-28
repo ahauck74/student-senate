@@ -1,0 +1,19 @@
+<! DOCTYPE html>
+<html>
+	<body>
+	
+		<form action = "http://cs358.cis.valpo.edu:5000/new-rerec" method = "post">
+		<fieldset>
+			<legend for="687977312">Select an organization.</legend>
+			<select name="org">
+			{% for i in range(ORGS|length) %}
+			<option value={{ORGS[i]}}> {{ORGS[i]}}</option>
+			{% endfor %}
+		  	</select>
+    	</fieldset>
+    	
+    	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
+	</body>
+</html>
+
+
