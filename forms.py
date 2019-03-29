@@ -20,7 +20,6 @@ class RecForm:
 		self.num_members = request.form['members_total']
 		
 		self.num_officers = request.form['num_officers']
-		self.num_advisors = request.form['num_advisors']
 		
 		
 		
@@ -76,7 +75,6 @@ class RerecForm:
 		self.num_members = request.form['members_total']
 		
 		self.num_officers = request.form['num_officers']
-		self.num_advisors = request.form['num_advisors']
 
 	def get_org_link(self):
 		return self.org_name.replace(" ","-")
@@ -101,3 +99,66 @@ class RerecForm:
 	def commit_to_database(self):
 		#TODO: Write this method
 		print('hi')
+		
+class OfficerForm:
+	
+	def __init__(self, request):
+		self.names, self.phones, self.emails, self.positions = [], [], [], []
+		self.num_officers = int((len(request.form)-1)/4) #Divide by the number of unique fields (name,phone,email,pos) and subtract one for the question asking about number of advisors
+		for i in range(self.num_officers):
+		
+			self.names.append(request.form['name' + str(i)])
+			self.phones.append(request.form['phone' + str(i)] )
+			self.emails.append(request.form['email' + str(i)] )
+			self.positions.append(request.form['position' + str(i)] )
+			
+	def validate(self):
+		error_message = ''
+		for i in range(self.num_officers):
+			if not (self.names[i]):
+				error_message += "Missing officer " + str(i+1) + " name.\n"
+			if not (self.phones[i]):
+				error_message += "Missing officer " + str(i+1) + " phone.\n"
+			if not (self.emails[i]):
+				error_message += "Missing officer " + str(i+1) + " email.\n"
+			if not (self.positions[i]):
+				error_message += "Missing officer " + str(i+1) + " position.\n"
+		#TODO: Check if valid email using regex, and possibly add other validation requirements
+		'''if not isinstance(self.num_officers, int):
+			error_message += ("Number of officers needs to be an integer, instead got " + self.num_officers + ".\n")
+		if not isinstance(self.num_advisors, int):
+			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
+
+		return error_message
+		
+class AdvisorForm:
+	
+	def __init__(self, request):
+		self.names, self.phones, self.emails, self.positions = [], [], [], []
+		self.num_advisors = int(len(request.form)/3) #Divide by the number of fields
+		for i in range(self.num_advisors):
+		
+			self.names.append(request.form['name' + str(i)])
+			self.phones.append(request.form['phone' + str(i)] )
+			self.emails.append(request.form['email' + str(i)] )
+			
+	def validate(self):
+		error_message = ''
+		for i in range(self.num_officers):
+			if not (self.names[i]):
+				error_message += "Missing advisor " + str(i+1) + " name.\n"
+			if not (self.phones[i]):
+				error_message += "Missing advisor " + str(i+1) + " phone.\n"
+			if not (self.emails[i]):
+				error_message += "Missing advisor " + str(i+1) + " email.\n"
+		#TODO: Check if valid email using regex, and possibly add other validation requirements
+		'''if not isinstance(self.num_officers, int):
+			error_message += ("Number of officers needs to be an integer, instead got " + self.num_officers + ".\n")
+		if not isinstance(self.num_advisors, int):
+			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
+
+		return error_message
+		
+		
+			
+		
