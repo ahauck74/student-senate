@@ -23,7 +23,7 @@ class RecForm:
 		
 		self.num_advisors = int(request.form['num_advisors'])
 		self.adv_names, self.adv_phones, self.adv_emails = [], [], []
-		for i in range(self.num_officers):
+		for i in range(self.num_advisors):
 		
 			self.adv_names.append(request.form['adv_name' + str(i)])
 			self.adv_phones.append(request.form['adv_phone' + str(i)] )

@@ -48,9 +48,9 @@ def new_rec_submission():
 			
 			mycursor = mydb.cursor()
 			#Insert org info to the database
-			sql = """INSERT INTO organizations (ORG_LINK_NAME, ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, 			 
-					 ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance)
+			sql = """INSERT INTO organizations (ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, 			 
+					 ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+			val = (form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance)
 			mycursor.execute(sql, val)
 			mydb.commit()
 			
@@ -62,9 +62,9 @@ def new_rec_submission():
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
 			
-			sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s)"""
+			sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID) VALUES (%s, %s, %s, %s)"""
 			for i in range(form.num_advisors):
-				val = (form.adv_name[i], form.adv_phone[i], form.adv_email[i], ID, datetime.datetime.now().year)
+				val = (form.adv_names[i], form.adv_phones[i], form.adv_emails[i], ID)
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
 			
@@ -122,8 +122,8 @@ def new_submission_rerec(ID):
 		else:
 			
 			mycursor = mydb.cursor()	
-			sql_update_query = """UPDATE organizations SET ORG_LINK_NAME = %s, ORG_NAME= %s, ORG_ACR= %s, ORG_EMAIL= %s, TIER_REQUEST= %s, ORG_DESCRIPTION= %s, CONSTITUTION= %s, ORG_MEMBERS= %s, ORG_ATTENDING_MEMBERS= %s WHERE ORG_ID = %s"""
-			val = (form.get_org_link(), form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, ID)
+			sql_update_query = """UPDATE organizations ORG_NAME= %s, ORG_ACR= %s, ORG_EMAIL= %s, TIER_REQUEST= %s, ORG_DESCRIPTION= %s, CONSTITUTION= %s, ORG_MEMBERS= %s, ORG_ATTENDING_MEMBERS= %s WHERE ORG_ID = %s"""
+			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, ID)
 			mycursor.execute(sql_update_query, val)
 			mydb.commit()
 			
@@ -135,9 +135,9 @@ def new_submission_rerec(ID):
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
 			
-			sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s)"""
+			sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID) VALUES (%s, %s, %s, %s)"""
 			for i in range(form.num_advisors):
-				val = (form.adv_name[i], form.adv_phone[i], form.adv_email[i], ID, datetime.datetime.now().year)
+				val = (form.adv_names[i], form.adv_phones[i], form.adv_emails[i], ID)
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
 			
