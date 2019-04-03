@@ -1,8 +1,81 @@
 <! DOCTYPE html>
 <html>
-	<body>
-		{% for i in range(NAMES|length) %}
-			<pre><a href="">{{ NAMES[i] }}	{{ ACRS[i] }}	{{EMAILS[i]}}</a></pre>
-		{% endfor %}
-	</body>
+<head>
+<title>Valpo Student organizations</title>
+<style type="text/css">
+	body{
+		background: #e3dac8;
+		margin:0;
+		padding:0;
+		width:100%;
+		position:absolute;
+		font:normal 15px/2.0em Arial;
+	}
+	th{
+		text-align: left;
+	}
+	#header{
+		text-decoration:bold;
+		font:normal 20px/0.5em Arial;
+		padding-top: 15px;
+		padding-bottom: 15px;
+		color: white;
+		clear: left;
+		background: #381e0e;
+		text-align: center;
+	}
+	/* Footer */
+	#footer{
+		background: #381e0e;
+		text-align: center;
+		bottom: 0;
+		position: fixed;
+		width:100%;
+	}
+	#footer-inner{
+		margin:auto;
+		text-align: center;
+		padding: 12px;
+		width: 922px;
+		color: white;
+	}
+	#footer a{
+		color:white;
+		text-decoration:none;
+	}
+	#footer a:hover{
+		color: #e3dac8;
+		text-decoration:bold;
+	}
+</style>
+</head>
+<body>
+	<div id="header">
+		<p>2019 Valpo Student Organizations</p>
+	</div>
+	
+	<div>
+		<table style="width:100%">
+		  <tr>
+		    <th>Name of Organization</th>
+		    <th>Acronymmmmmm</th>
+		    <th>Contact Email</th>
+		  </tr>
+		  {% for i in range(NAMES|length) %}
+		  <tr>
+		    <td><a href="/orgs/{{IDS[i]}}">{{ NAMES[i] }}</a></td>
+		    <td>{{ ACRS[i] }}</td>
+		    <td>{{EMAILS[i]}}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+	</div>
+</body>
+
+<footer id="footer">
+	<div id="footer">
+		<p>&copy; Valparaiso University 2019, Valparaiso, IN 36383-6493, 219.464.5000 &#124; <a href="https://www.valpo.edu/copyright/" target="_blank">Privacy Policy</a></p>
+	<div class="clr"></div>
+	</div>
+</footer>
 </html>

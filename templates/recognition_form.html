@@ -1,4 +1,9 @@
 <html>
+
+	<head>
+		<script type="text/javascript" src="/static/js/officer_advisor_fields.js"> </script>
+	</head>
+	
    <body>
 <form action = "http://cs358.cis.valpo.edu:5000/new-rec-submission" method = "post">
     <fieldset>
@@ -68,11 +73,58 @@
     <fieldset>
         <legend for="2031252228">How many officers are in your organization?</legend>
         <div class="form-group">
-            <input id="74392382" type="text" name="num_officers" class="form-control" >
+            <input id="74392382" type="text" name="num_officers" class="form-control" oninput="dynamicOfficers(this.value)">
         </div>
     </fieldset>
     
+    <fieldset id="officer_form">
+        <legend for="618671397">Officer's Name</legend>
+        <div class="form-group">
+            <input id="207141534" type="text" name="off_name0" class="form-control" >
+        </div>
 
+        <legend for="618671398">Officer's Phone Number</legend>
+        <div class="form-group">
+            <input id="207141535" type="text" name="off_phone0" class="form-control" >
+        </div>
+
+        <legend for="618671397">Officer's Email</legend>
+        <div class="form-group">
+            <input id="207141534" type="text" name="off_email0" class="form-control" >
+        </div>
+
+        <legend for="1898475776">Officer's Position</legend>
+        <div class="form-group">
+            <input id="1336707939" type="text" name="off_pos0" class="form-control" >
+        </div>
+    </fieldset>
+    
+    
+    <fieldset>
+        <legend for="20712345">How many advisors are in your organization?</legend>
+        <div class="form-group">
+            <input id="20712345" type="text" name="num_advisors" class="form-control" oninput="dynamicAdvisors(this.value)">
+        </div>
+    </fieldset>
+    
+    			
+    <fieldset id="advisor_form">
+        <legend for="618671397">Advisor's Name</legend>
+        <div class="form-group">
+            <input id="207141534" type="text" name="name0" class="form-control" >
+        </div>
+
+        <legend for="618671398">Advisor's Phone Number</legend>
+        <div class="form-group">
+            <input id="207141535" type="text" name="adv_phone0" class="form-control" >
+        </div>
+
+        <legend for="618671397">Advisor's Email</legend>
+        <div class="form-group">
+            <input id="207141534" type="text" name="adv_email0" class="form-control" >
+        </div>
+
+    </fieldset>
 
     <input type="hidden" name="fvv" value="1">
     <input type="hidden" name="fbzx" value="8331794832937362373">

@@ -1,9 +1,69 @@
 <! DOCTYPE html>
 <html>
+	<head>
+	<title>{{NAME}}</title>
+	<style type="text/css">
+		body{
+			background: #e3dac8;
+			margin:0;
+			padding:0;
+			width:100%;
+			position:absolute;
+			font:normal 15px/2.0em Arial;
+		}
+		#header{
+			text-decoration:bold;
+			font:normal 20px/0.5em Arial;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			color: white;
+			clear: left;
+			background: #381e0e;
+			text-align: center;
+		}
+		/* Footer */
+		#footer{
+			background: #381e0e;
+			text-align: center;
+			bottom: 0;
+			position: fixed;
+			width:100%;
+		}
+		#footer-inner{
+			margin:auto;
+			text-align: center;
+			padding: 12px;
+			width: 922px;
+			color: white;
+		}
+		#footer a{
+			color:white;
+			text-decoration:none;
+		}
+		#footer a:hover{
+			color: #e3dac8;
+			text-decoration:bold;
+		}
+	</style>
+	</head>
 	<body>
-		<p>{{ NAME }}</p>
-		<p>{{ ACR }}</p>
-		<p>{{ DESC }}</p>
-		<p>{{ EMAIL }}</p>
+		<div id="header">
+			<p>{{NAME}}</p>
+		</div>
+		
+		<div id="body">
+			<p>Name: {{ NAME }}</p>
+			<p>Acronym: {{ ACR }}</p>
+			<p>Description: {{ DESC }}</p>
+			<!currently broken and under construction>
+			<p>Email: <a href="mailto:{{EMAIL}}" target="_top">{{EMAIL}}</a></p>
+		</div>
 	</body>
+	
+	<footer id="footer">
+		<div id="footer">
+			<p>&copy; Valparaiso University 2019, Valparaiso, IN 36383-6493, 219.464.5000 &#124; <a href="https://www.valpo.edu/copyright/" target="_blank">Privacy Policy</a></p>
+		<div class="clr"></div>
+		</div>
+	</footer>
 </html>
