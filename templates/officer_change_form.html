@@ -1,0 +1,44 @@
+<! DOCTYPE html>
+<html>
+
+	<head>
+		<script type="text/javascript" src="/static/js/officer_advisor_fields.js"> </script>
+	</head>
+	
+	<body>
+	
+	<form action = "http://cs358.cis.valpo.edu:5000/new-officers-submission/{{ID}}" method = "post">
+	  
+  	<fieldset>
+        <legend for="2031252228">How many officers are in your organization?</legend>
+        <div class="form-group">
+            <input id="74392382" type="text" name="num_officers" class="form-control" oninput="dynamicOfficers(this.value)" value="{{OFF_LIST|length}}">
+        </div>
+    </fieldset>
+    
+    <div id="holder">
+		{% for officer in OFF_LIST %}
+		<fieldset id="officer_form">
+			<br>
+		    <label>Officer's Name</label>
+		    <input id="name" type="text" name="off_name0" class="form-control" value="{{officer[0]}}">
+		    
+		    <br>
+		    <label>Officer's Phone Number</label>
+	        <input id="207141535" type="text" name="off_phone0" class="form-control" value="{{officer[1]}}">
+			
+			<br>
+		    <label>Officer's Email</label>
+	        <input id="207141534" type="text" name="off_email0" class="form-control" value="{{officer[2]}}">
+
+			<br>
+		    <label>Officer's Position</label>
+	        <input id="1336707939" type="text" name="off_pos0" class="form-control" value="{{officer[3]}}">
+		</fieldset>
+		{% endfor %}
+    </div>
+        	
+    	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
+	</body>
+</html>
+

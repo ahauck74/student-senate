@@ -1,0 +1,29 @@
+<! DOCTYPE html>
+<html>
+
+
+	<body>
+	
+		<form id = "form_id" name = "myform" action = "/off-adv-change-prompt/" method = "post">
+		
+
+		<fieldset>
+			<legend for="687977312">Select an organization.</legend>
+			<select name="org" id="select">
+			{% for i in range(ORGS|length) %}
+			<option value={{IDS[i]}}> {{ORGS[i]}}</option>
+			{% endfor %}
+		  	</select>
+    	</fieldset>
+    	
+    	<fieldset>
+    		<legend> Change officers or advisor information? </legend>
+    		<input type="radio" name="radAnswer" value="officer"/> Officers <br>
+    		<input type="radio" name="radAnswer" value="advisor"/> Advisors <br>
+    	</fieldset>
+    	
+    	<input class="btn btn-primary" name = "submit_btn" type="submit" value="Submit">
+	</body>
+</html>
+
+

@@ -1,6 +1,6 @@
 function dynamicOfficers(val) {
 	// Container <div> where dynamic content will be placed
-    var container = document.getElementById("officer_form");
+    var container = document.getElementById("holder");
     // Clear previous contents of the container
     while (container.hasChildNodes()) {
         container.removeChild(container.lastChild);
@@ -13,7 +13,7 @@ function dynamicOfficers(val) {
     
     	
         var name = document.createElement("input");
-        name.id = "off_name" + i
+        name.id = "off_name" + i;
         name.type = "text";
         name.name = "off_name" + i;
         var label = document.createElement("LABEL");
@@ -64,7 +64,7 @@ function dynamicAdvisors(val) {
     
     	
         var name = document.createElement("input");
-        name.id = "adv_name" + i
+        name.id = "adv_name" + i;
         name.type = "text";
         name.name = "adv_name" + i;
         var label = document.createElement("LABEL");

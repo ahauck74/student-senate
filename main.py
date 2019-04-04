@@ -4,6 +4,7 @@ import mysql.connector
 import datetime
 
 app = Flask("Sprint2")
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 mydb = mysql.connector.connect(
   host="cs358.cis.valpo.edu",
@@ -143,14 +144,68 @@ def new_submission_rerec(ID):
 			
 			return redirect('orgs/'+ str(ID))
 			
+####################################################
+# Org Select For The Advisor/Officer Change Prompt
+####################################################
+@app.route("/off-adv-change-prompt/", methods=['GET', 'POST'])
+@app.route("/off-adv-change-prompt/<ID>", methods=['GET', 'POST'])
+
+def off_adv_change_prompt(ID=None):	
+			
+	if request.method == "GET":
+		mycursor = mydb.cursor()
+		mycursor.execute("SELECT ORG_NAME, ORG_ID FROM organizations")
+		org_name_list = mycursor.fetchall()
+		
+		#TODO: The below code is a VERY roundabout way of formatting this list properly. The original fetchall  using just the org_name returns a list of 
+		#tuples that looks like [('name1,'), ('name2,')... etc with the commas stuck there. This should be fixed.
+		names, IDs = [], []
+		for row in org_name_list:
+			name, ID = row
+			names.append(name)
+			IDs.append(ID)
+		
+		return render_template("org_select_adv_off.html", ORGS = names, IDS = IDs) 
+		
+	else:
+		mode = request.form['radAnswer'] #Either <officer> or <advisor>
+		ID = request.form['org'] #Gets the ID of the selected org
+		if mode == 'officer':
+			mycursor = mydb.cursor()
+			sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
+			mycursor.execute(sql)
+			officer_list = mycursor.fetchall()
+			
+			#return str(fetch)
+			return render_template("officer_change_form.html", OFF_LIST=officer_list)
+		
+		elif mode == 'advisor':
+			mycursor = mydb.cursor()
+			sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
+			mycursor.execute(sql)
+			fetch = mycursor.fetchall()
+			
+			
+			return render_template("advisor_change_form.html")
+
 
 ##########################################
-# The Advisor/Officer Change Form
+# The Officer Change Form
+##########################################
+@app.route("/officer-change", methods=['POST', 'GET'])
+def officer_change():
+
+	return render_template("officer_change_form.html")
+
+
+##########################################
+# The Advisor Change Form
 ##########################################
 @app.route("/advisor-officer-change", methods=['POST', 'GET'])
-def new():
-	return render_template("advisor_officer_change_form.html") 
+def advisor_change():
 
+	return render_template("advisor_change_form.html") 
+	
 
 ##########################################
 # The Org List
