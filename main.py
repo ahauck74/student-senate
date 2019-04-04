@@ -4,7 +4,7 @@ import mysql.connector
 import datetime
 
 app = Flask("Sprint2")
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Maybe prevents an issue with static files being cached in the browser, remove in final product
 
 mydb = mysql.connector.connect(
   host="cs358.cis.valpo.edu",
@@ -192,10 +192,27 @@ def off_adv_change_prompt(ID=None):
 ##########################################
 # The Officer Change Form
 ##########################################
-@app.route("/officer-change", methods=['POST', 'GET'])
+@app.route("/new-officers-submission/<ID>", methods=['POST'])
 def officer_change():
 
-	return render_template("officer_change_form.html")
+	# read the user input into the RerecForm class
+	form = OfficerForm(request)
+	errors = form.validate()
+	if (errors):
+		return(errors)
+	else:
+		
+		mycursor = mydb.cursor()	
+		
+		sql_delete_query = "DELETE FROM officers WHERE ORG_ID = " + ID
+		mycursor.execute(sql_delete_query)
+		sql_insert_query = """INSERT INTO officers (OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s, %s)"""
+		for i in range(form.num_officers):
+			val = (form.off_names[i], form.off_phones[i], form.off_emails[i], form.off_pos[i], ID, datetime.datetime.now().year)
+			mycursor.execute(sql_insert_query, val)
+		mydb.commit()
+
+	return redirect('orgs/'+ str(ID))
 
 
 ##########################################

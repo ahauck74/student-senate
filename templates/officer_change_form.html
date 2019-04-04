@@ -7,7 +7,7 @@
 	
 	<body>
 	
-	<form action = "http://cs358.cis.valpo.edu:5000/new-officers-submission/{{ID}}" method = "post">
+	<form action = "/new-officers-submission/{{ID}}" method = "post">
 	  
   	<fieldset>
         <legend for="2031252228">How many officers are in your organization?</legend>
@@ -17,25 +17,30 @@
     </fieldset>
     
     <div id="holder">
-		{% for officer in OFF_LIST %}
-		<fieldset id="officer_form">
+		{% for i in range(OFF_LIST|length) %}
+		<fieldset id="officer_form" style="position:relative">
+			
+			
 			<br>
 		    <label>Officer's Name</label>
-		    <input id="name" type="text" name="off_name0" class="form-control" value="{{officer[0]}}">
+		    <input id="name" type="text" name="off_name{{i}}" class="form-control" value="{{OFF_LIST[i][0]}}">
 		    
 		    <br>
 		    <label>Officer's Phone Number</label>
-	        <input id="207141535" type="text" name="off_phone0" class="form-control" value="{{officer[1]}}">
+	        <input id="phone" type="text" name="off_phone{{i}}" class="form-control" value="{{OFF_LIST[i][1]}}">
 			
 			<br>
 		    <label>Officer's Email</label>
-	        <input id="207141534" type="text" name="off_email0" class="form-control" value="{{officer[2]}}">
+	        <input id="email" type="text" name="off_email{{i}}" class="form-control" value="{{OFF_LIST[i][2]}}">
 
 			<br>
 		    <label>Officer's Position</label>
-	        <input id="1336707939" type="text" name="off_pos0" class="form-control" value="{{officer[3]}}">
+	        <input id="pos" type="text" name="off_pos{{i}}" class="form-control" value="{{OFF_LIST[i][3]}}">
+	        <button style="position: absolute;right:10px;top:-5px;outline:5px solid #fff"
+	        		onclick="removeFieldset(this)" type="button">
 		</fieldset>
 		{% endfor %}
+		<button onclick="addOfficerFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length}}" value="Add officer">
     </div>
         	
     	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">

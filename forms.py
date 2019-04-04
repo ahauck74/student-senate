@@ -150,25 +150,25 @@ class RerecForm:
 class OfficerForm:
 	
 	def __init__(self, request):
-		self.names, self.phones, self.emails, self.positions = [], [], [], []
-		self.num_officers = int((len(request.form)-1)/4) #Divide by the number of unique fields (name,phone,email,pos) and subtract one for the question asking about number of advisors
+		self.num_officers = int(request.form['num_officers'])
+		self.off_names, self.off_phones, self.off_emails, self.off_pos = [], [], [], []
 		for i in range(self.num_officers):
 		
-			self.names.append(request.form['name' + str(i)])
-			self.phones.append(request.form['phone' + str(i)] )
-			self.emails.append(request.form['email' + str(i)] )
-			self.positions.append(request.form['position' + str(i)] )
+			self.off_names.append(request.form['off_name' + str(i)])
+			self.off_phones.append(request.form['off_phone' + str(i)] )
+			self.off_emails.append(request.form['off_email' + str(i)] )
+			self.off_pos.append(request.form['off_pos' + str(i)] )
 			
 	def validate(self):
 		error_message = ''
 		for i in range(self.num_officers):
-			if not (self.names[i]):
+			if not (self.off_names[i]):
 				error_message += "Missing officer " + str(i+1) + " name.\n"
-			if not (self.phones[i]):
+			if not (self.off_phones[i]):
 				error_message += "Missing officer " + str(i+1) + " phone.\n"
-			if not (self.emails[i]):
+			if not (self.off_emails[i]):
 				error_message += "Missing officer " + str(i+1) + " email.\n"
-			if not (self.positions[i]):
+			if not (self.off_positions[i]):
 				error_message += "Missing officer " + str(i+1) + " position.\n"
 		#TODO: Check if valid email using regex, and possibly add other validation requirements
 		'''if not isinstance(self.num_officers, int):

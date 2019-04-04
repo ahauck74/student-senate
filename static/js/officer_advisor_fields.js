@@ -5,6 +5,9 @@ function dynamicOfficers(val) {
     while (container.hasChildNodes()) {
         container.removeChild(container.lastChild);
     }
+    //var newContainer = document.createElement("Fieldset");
+    container = container.appendChild(document.createElement("Fieldset"));
+    
     for (i=0;i<val;i++){
         // Append a node with a random text
         container.appendChild(document.createTextNode("Officer " + (i+1)));
@@ -44,7 +47,6 @@ function dynamicOfficers(val) {
         container.appendChild(pos);
         
         // Append a line break 
-        container.appendChild(document.createElement("br"));
         container.appendChild(document.createElement("br"));
     }
 }
@@ -91,4 +93,64 @@ function dynamicAdvisors(val) {
         // Append a line break 
         container.appendChild(document.createElement("br"));
     }
+}
+
+function removeFieldset(e) {
+	e.parentNode.parentNode.removeChild(e.parentNode);
+	
+	//Decrement add button
+	var addButton = getElementsByName("addButton");
+	var id = parseInt(addButon.id);
+	addButton.id = (id-1).toString();
+	
+	//Decerement all lower fieldsets
+	
+}
+
+function addOfficerFieldset(button) {
+	var i = parseInt(button.id);
+	var container = document.getElementById("holder");
+	container = container.appendChild(document.createElement("Fieldset"));
+	container.appendChild(document.createTextNode("Officer " + (i+1)));
+    container.appendChild(document.createElement("br"));
+    // Create an <input> element, set its type and name attributes
+
+	
+    var name = document.createElement("input");
+    name.id = "off_name" + i;
+    name.type = "text";
+    name.name = "off_name" + i;
+    var label = document.createElement("LABEL");
+	label.htmlFor = "off_name" + i;
+    label.innerHTML="Officer Name " + (i+1);
+    container.appendChild(label);
+    container.appendChild(name);
+    container.appendChild(document.createElement("br"));
+    
+    container.appendChild(document.createTextNode("Officer Phone " + (i+1)));
+    var phone = document.createElement("input");
+    phone.type = "text";
+    phone.name = "off_phone" + i;
+    container.appendChild(phone);
+    container.appendChild(document.createElement("br"));
+    
+    container.appendChild(document.createTextNode("Officer Email " + (i+1)));
+    var email = document.createElement("input");
+    email.type = "text";
+    email.name = "off_email" + i;
+    container.appendChild(email);
+    container.appendChild(document.createElement("br"));
+    
+    container.appendChild(document.createTextNode("Officer Position " + (i+1)));
+    var pos = document.createElement("input");
+    pos.type = "text";
+    pos.name = "off_pos" + i;
+    container.appendChild(pos);
+    
+    // Append a line break 
+    container.appendChild(document.createElement("br"));
+    var newid = i + 1;
+    //container.appendChild(document.createTextNode(newid.toString());
+    button.id = newid.toString();
+    
 }
