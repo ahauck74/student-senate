@@ -168,7 +168,7 @@ class OfficerForm:
 				error_message += "Missing officer " + str(i+1) + " phone.\n"
 			if not (self.off_emails[i]):
 				error_message += "Missing officer " + str(i+1) + " email.\n"
-			if not (self.off_positions[i]):
+			if not (self.off_pos[i]):
 				error_message += "Missing officer " + str(i+1) + " position.\n"
 		#TODO: Check if valid email using regex, and possibly add other validation requirements
 		'''if not isinstance(self.num_officers, int):

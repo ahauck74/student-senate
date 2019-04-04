@@ -177,7 +177,7 @@ def off_adv_change_prompt(ID=None):
 			officer_list = mycursor.fetchall()
 			
 			#return str(fetch)
-			return render_template("officer_change_form.html", OFF_LIST=officer_list)
+			return render_template("officer_change_form.html", OFF_LIST=officer_list, ID=ID)
 		
 		elif mode == 'advisor':
 			mycursor = mydb.cursor()
@@ -193,7 +193,7 @@ def off_adv_change_prompt(ID=None):
 # The Officer Change Form
 ##########################################
 @app.route("/new-officers-submission/<ID>", methods=['POST'])
-def officer_change():
+def officer_change(ID):
 
 	# read the user input into the RerecForm class
 	form = OfficerForm(request)

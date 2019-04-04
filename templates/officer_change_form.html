@@ -9,12 +9,8 @@
 	
 	<form action = "/new-officers-submission/{{ID}}" method = "post">
 	  
-  	<fieldset>
-        <legend for="2031252228">How many officers are in your organization?</legend>
-        <div class="form-group">
-            <input id="74392382" type="text" name="num_officers" class="form-control" oninput="dynamicOfficers(this.value)" value="{{OFF_LIST|length}}">
-        </div>
-    </fieldset>
+    <input id="num_officers" name="num_officers" class="form-control" value="{{OFF_LIST|length}}"> </input>
+
     
     <div id="holder">
 		{% for i in range(OFF_LIST|length) %}
@@ -40,7 +36,7 @@
 	        		onclick="removeFieldset(this)" type="button">
 		</fieldset>
 		{% endfor %}
-		<button onclick="addOfficerFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length}}" value="Add officer">
+		<button onclick="addOfficerFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length-1}}" value="Add officer">
     </div>
         	
     	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
