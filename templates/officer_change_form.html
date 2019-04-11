@@ -3,18 +3,24 @@
 
 	<head>
 		<script type="text/javascript" src="/static/js/officer_advisor_fields.js"> </script>
+		<title>Officer Change Form</title>
+		<link rel="stylesheet" href="/static/css/styles.css">
 	</head>
 	
 	<body>
 	
+	<div id="header">
+		<p>Officer Change Form</p>
+	</div>
+	
 	<form action = "/new-officers-submission/{{ID}}" method = "post">
 	  
-    <input id="num_officers" name="num_officers" class="form-control" value="{{OFF_LIST|length}}"> </input>
+    <input id="num_members" name="num_members" class="form-control" value="{{OFF_LIST|length}}" type="hidden"> </input>
 
     
     <div id="holder">
 		{% for i in range(OFF_LIST|length) %}
-		<fieldset id="officer_form" style="position:relative">
+		<fieldset id="member_form" style="position:relative">
 			
 			
 			<br>
@@ -36,7 +42,7 @@
 	        		onclick="removeFieldset(this)" type="button">
 		</fieldset>
 		{% endfor %}
-		<button onclick="addOfficerFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length-1}}" value="Add officer">
+		<button onclick="addMemberFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length-1}}" value="Add member">
     </div>
         	
     	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
