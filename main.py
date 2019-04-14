@@ -183,10 +183,10 @@ def off_adv_change_prompt(ID=None):
 			mycursor = mydb.cursor()
 			sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
 			mycursor.execute(sql)
-			fetch = mycursor.fetchall()
+			advisor_list = mycursor.fetchall()
 			
 			
-			return render_template("advisor_change_form.html")
+			return render_template("advisor_change_form.html", ADV_LIST=advisor_list, ID=ID)
 
 
 ##########################################
@@ -218,10 +218,27 @@ def officer_change(ID):
 ##########################################
 # The Advisor Change Form
 ##########################################
-@app.route("/advisor-officer-change", methods=['POST', 'GET'])
-def advisor_change():
+@app.route("/new-advisors-submission/<ID>", methods=['POST'])
+def advisor_change(ID):
 
-	return render_template("advisor_change_form.html") 
+	# read the user input into the RerecForm class
+	form = AdvisorForm(request)
+	errors = form.validate()
+	if (errors):
+		return(errors)
+	else:
+		
+		mycursor = mydb.cursor()	
+		
+		sql_delete_query = "DELETE FROM advisors WHERE ORG_ID = " + ID
+		mycursor.execute(sql_delete_query)
+		sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s, %s)"""
+		for i in range(form.num_advisors):
+			val = (form.adv_names[i], form.adv_phones[i], form.adv_emails[i], ID, datetime.datetime.now().year)
+			mycursor.execute(sql_insert_query, val)
+		mydb.commit()
+
+	return redirect('orgs/'+ str(ID))
 	
 
 ##########################################
@@ -231,25 +248,23 @@ def advisor_change():
 @app.route("/orgs/")
 def org_list():
 	cursor = mydb.cursor()
-	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID FROM organizations")
+	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER FROM organizations")
 	rows = cursor.fetchall()
 	names = []
 	ACRs = []
 	emails = []
 	IDS = []
+	tiers = []
 	
 	for row in rows:
-		name, ACR, email, ID = row
+		name, ACR, email, ID, tier = row
 		names.append(name)
 		ACRs.append(ACR)
 		emails.append(email)
 		IDS.append(ID)
-	
-	#return str(names) + "<br>" + str(emails) + "<br>" + str(ACRs)
+		tiers.append(tier)
 
-	#Sawyer
-
-	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDS)
+	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDS, TIERS=tiers)
 
 		
 ##########################################

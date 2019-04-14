@@ -1,53 +1,9 @@
 <! DOCTYPE html>
 <html>
 <head>
-<title>Valpo Student organizations</title>
-<style type="text/css">
-	body{
-		background: #e3dac8;
-		margin:0;
-		padding:0;
-		width:100%;
-		position:absolute;
-		font:normal 15px/2.0em Arial;
-	}
-	th{
-		text-align: left;
-	}
-	#header{
-		text-decoration:bold;
-		font:normal 20px/0.5em Arial;
-		padding-top: 15px;
-		padding-bottom: 15px;
-		color: white;
-		clear: left;
-		background: #381e0e;
-		text-align: center;
-	}
-	/* Footer */
-	#footer{
-		background: #381e0e;
-		text-align: center;
-		bottom: 0;
-		position: fixed;
-		width:100%;
-	}
-	#footer-inner{
-		margin:auto;
-		text-align: center;
-		padding: 12px;
-		width: 922px;
-		color: white;
-	}
-	#footer a{
-		color:white;
-		text-decoration:none;
-	}
-	#footer a:hover{
-		color: #e3dac8;
-		text-decoration:bold;
-	}
-</style>
+	<title>Valpo Student organizations</title>
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<script type="text/javascript" src="/static/js/table_sort.js"> </script>
 </head>
 <body>
 	<div id="header">
@@ -55,17 +11,19 @@
 	</div>
 	
 	<div>
-		<table style="width:100%">
+		<table style="width:100%" id="sort_table">
 		  <tr>
-		    <th>Name of Organization</th>
-		    <th>Acronymmmmmm</th>
-		    <th>Contact Email</th>
+		    <th onclick="sortTable(0)">Name of Organization</th>
+		    <th onclick="sortTable(1)">Acronym</th>
+		    <th onclick="sortTable(2)">Contact Email</th>
+		    <th onclick="sortTable(3)">Tier</th> 
 		  </tr>
 		  {% for i in range(NAMES|length) %}
 		  <tr>
 		    <td><a href="/orgs/{{IDS[i]}}">{{ NAMES[i] }}</a></td>
 		    <td>{{ ACRS[i] }}</td>
 		    <td>{{EMAILS[i]}}</td>
+		    <td>{{TIERS[i]}}</td>
 		  </tr>
 		  {% endfor %}
 		</table>
