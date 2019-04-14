@@ -97,18 +97,18 @@ function dynamicAdvisors(val) {
 
 function removeFieldset(e) {
 	var fieldset = e.parentNode;
+	var container = fieldset.parentNode;
 	var inputs = fieldset.getElementsByTagName("input");
 	var cur_idx = parseInt(inputs[0].name.slice(-1));
 	e.parentNode.parentNode.removeChild(e.parentNode);
 	
 	
 	//Decrement add button
-	var addButton = document.getElementsByName("add_button")[0];
+	var addButton = container.nextElementSibling;
 	var id = parseInt(addButton.id);
 	addButton.id = (id-1).toString();
 	
 	//Decerement all lower fieldsets
-	var container = document.getElementById("holder");
     var inputs = container.getElementsByTagName("input");
     for(let i=0; i<inputs.length; i++) {
     	var name = inputs[i].name;
@@ -121,13 +121,13 @@ function removeFieldset(e) {
     }
     
    //Decrement num_officer counter
-   var num_member_ctr = document.getElementById("num_members");
+   var num_member_ctr = container.previousElementSibling;
    num_member_ctr.value = parseInt(num_member_ctr.value) - 1;
 }
 
 function addMemberFieldset(button) {
 	var i = parseInt(button.id);
-	var container = button.parentNode;
+	var container = button.previousElementSibling;
 	var form = container.children[0];
 	var newForm = form.cloneNode(true);
 
