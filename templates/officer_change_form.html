@@ -22,8 +22,6 @@
 		{% for i in range(OFF_LIST|length) %}
 		<fieldset id="member_form" style="position:relative">
 			
-			
-			<br>
 		    <label>Officer's Name</label>
 		    <input id="name" type="text" name="off_name{{i}}" class="form-control" value="{{OFF_LIST[i][0]}}">
 		    
@@ -38,10 +36,40 @@
 			<br>
 		    <label>Officer's Position</label>
 	        <input id="pos" type="text" name="off_pos{{i}}" class="form-control" value="{{OFF_LIST[i][3]}}">
-	        <button style="position: absolute;right:10px;top:-5px;outline:5px solid #fff"
-	        		onclick="removeFieldset(this)" type="button">
+	        {% if i == 0 %}
+			    <button style="display: none"
+			    		onclick="removeFieldset(this)"  type="button">
+			{% else %}
+				<button style="position: absolute;right:10px;top:-5px;outline:5px solid #fff"
+			    		onclick="removeFieldset(this)" type="button">
+			
+	        {% endif %}
 		</fieldset>
 		{% endfor %}
+		
+		{% if OFF_LIST|length == 0 %}
+		<fieldset id="member_form" style="position:relative">
+			
+			<label>Officer's Name</label>
+		    <input id="name" type="text" name="off_name0" class="form-control">
+		    
+		    <br>
+		    <label>Officer's Phone Number</label>
+	        <input id="phone" type="text" name="off_phone0" class="form-control">
+			
+			<br>
+		    <label>Officer's Email</label>
+	        <input id="email" type="text" name="off_email0" class="form-control">
+
+			<br>
+		    <label>Officer's Position</label>
+	        <input id="pos" type="text" name="off_pos0" class="form-control">
+	        
+	        <button style="display: none"
+			    	onclick="removeFieldset(this)"  type="button">
+			    	
+		</fieldset>
+		{% endif %}
 		<button onclick="addMemberFieldset(this)" type="button" name="add_button" id="{{OFF_LIST|length-1}}" value="Add member">
     </div>
         	

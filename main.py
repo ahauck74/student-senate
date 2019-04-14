@@ -1,5 +1,5 @@
 from flask import Flask, render_template, json, request, redirect, url_for, abort
-from forms import RerecForm, RecForm, OfficerForm
+from forms import RerecForm, RecForm, OfficerForm, AdvisorForm
 import mysql.connector
 import datetime
 
@@ -99,9 +99,18 @@ def who_rerec():
 		ORG_ID = '""" + str(request.form['org']) + "'" 
 		mycursor.execute(sql)
 		fetch = mycursor.fetchall()
+		ID = str(fetch[0][3])
+		
+		sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
+		mycursor.execute(sql)
+		officer_list = mycursor.fetchall()
+		
+		sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
+		mycursor.execute(sql)
+		advisor_list = mycursor.fetchall()
 		
 		#TODO: Add officer/advisor info here, and make this cleaner.
-		return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3], DESC=fetch[0][4], CONSTITUTION=fetch[0][5], MEMBERS=fetch[0][6], ATTENDANCE=fetch[0][7])
+		return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3], DESC=fetch[0][4], CONSTITUTION=fetch[0][5], MEMBERS=fetch[0][6], ATTENDANCE=fetch[0][7], OFF_LIST = officer_list, ADV_LIST = advisor_list)
 			
 
 ##########################################

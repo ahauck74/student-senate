@@ -2,9 +2,14 @@
 
 	<head>
 		<script type="text/javascript" src="/static/js/officer_advisor_fields.js"> </script>
+		<title>Re-Rec Form</title>
+		<link rel="stylesheet" href="/static/css/styles.css">
 	</head>
 	
    <body>
+   		<div id="header">
+   			<p>Re-Rec Form</p>
+   		</div>
 <form action = "http://cs358.cis.valpo.edu:5000/new-rec-submission" method = "post">
     <fieldset>
         <h2>Recognition Form <br><small>This form is for Currently Recognized Student Organizations of Valparaiso University. To continue to be a university recognized student organization of Valparaiso University for Spring 2019 and Fall 2020 Organizations must complete this form by Friday February 1st. Those who fail to fill out this form will no longer be recognized by the University and hence forth be unable to reserve university spaces, receive funding from student senate etc. Please fill this form out with detail and to the fullest of your ability. Responses that the Student Senate Administration Committee deems to not be completed well enough will not be accepted. If you show effort and answer the questions with detail there will not be an issue.</small></h2>
@@ -70,62 +75,62 @@
         </div>
     </fieldset>
     
-    <fieldset>
-        <legend for="74392382">How many officers are in your organization?</legend>
-        <div class="form-group">
-            <input id="74392382" type="text" name="num_officers" class="form-control" oninput="dynamicOfficers(this.value)">
-        </div>
-    </fieldset>
+    <input id="num_members" name="num_members" class="form-control" value="1" type="hidden"> </input>
+
     
-    <fieldset id="officer_form">
-        <legend for="618671397">Officer's Name</legend>
-        <div class="form-group">
-            <input id="207141534" type="text" name="off_name0" class="form-control" >
-        </div>
-        
-        <legend for="618671398">Officer's Phone Number</legend>
-        <div class="form-group">
-            <input id="207141535" type="text" name="off_phone0" class="form-control" >
-        </div>
+    <div id="holder1">
+		<fieldset id="member_form" style="position:relative">
+			
+			
+			<br>
+		    <label>Officer's Name</label>
+		    <input id="name" type="text" name="off_name0" class="form-control">
+		    
+		    <br>
+		    <label>Officer's Phone Number</label>
+	        <input id="phone" type="text" name="off_phone0" class="form-control">
+			
+			<br>
+		    <label>Officer's Email</label>
+	        <input id="email" type="text" name="off_email0" class="form-control">
 
-        <legend for="618671397">Officer's Email</legend>
-        <div class="form-group">
-            <input id="207141534" type="text" name="off_email0" class="form-control" >
-        </div>
-
-        <legend for="1898475776">Officer's Position</legend>
-        <div class="form-group">
-            <input id="1336707939" type="text" name="off_pos0" class="form-control" >
-        </div>
-        
-    </fieldset>
+			<br>
+		    <label>Officer's Position</label>
+	        <input id="pos" type="text" name="off_pos0" class="form-control">
+	        <button style="position: absolute;right:10px;top:-5px;outline:5px solid #fff"
+	        		onclick="removeFieldset(this)" type="button">
+		</fieldset>
+		<button style="position: absolute;left:10px:-5px;outline:5px solid #fff"
+				onclick="addMemberFieldset(this)" type="button" name="add_button" id="0" value="Add member">
+    </div>
     
     
-    <fieldset>
-        <legend for="20712345">How many advisors are in your organization?</legend>
-        <div class="form-group">
-            <input id="20712345" type="text" name="num_advisors" class="form-control" oninput="dynamicAdvisors(this.value)">
-        </div>
-    </fieldset>
+    <input id="num_members" name="num_members" class="form-control" value="1" type="hidden"> </input>
+
     
-    			
-    <fieldset id="advisor_form">
-        <legend for="618671397">Advisor's Name</legend>
-        <div class="form-group">
-            <input id="207141534" type="text" name="name0" class="form-control" >
-        </div>
+    <div id="holder2">
+		<fieldset id="member_form" style="position:relative">
+			
+			
+			<br>
+		    <label>Advisor's Name</label>
+		    <input id="name" type="text" name="adv_name0" class="form-control">
+		    
+		    <br>
+		    <label>Advisor's Phone Number</label>
+	        <input id="phone" type="text" name="adv_phone0" class="form-control">
+			
+			<br>
+		    <label>Advisor's Email</label>
+	        <input id="email" type="text" name="adv_email0" class="form-control">
 
-        <legend for="618671398">Advisor's Phone Number</legend>
-        <div class="form-group">
-            <input id="207141535" type="text" name="adv_phone0" class="form-control" >
-        </div>
-
-        <legend for="618671397">Advisor's Email</legend>
-        <div class="form-group">
-            <input id="207141534" type="text" name="adv_email0" class="form-control" >
-        </div>
-
-    </fieldset>
+	
+	        <button style="position: absolute;right:10px;top:-5px;outline:5px solid #fff"
+	        		onclick="removeFieldset(this)" type="button">
+		</fieldset>
+		<button style="position: absolute;left:10px;:-5px;outline:5px solid #fff"
+				onclick="addMemberFieldset(this)" type="button" name="add_button" id="0" value="Add member">
+    </div>
 
     <input type="hidden" name="fvv" value="1">
     <input type="hidden" name="fbzx" value="8331794832937362373">

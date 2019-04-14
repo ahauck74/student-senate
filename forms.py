@@ -150,7 +150,7 @@ class RerecForm:
 class OfficerForm:
 	
 	def __init__(self, request):
-		self.num_officers = int(request.form['num_officers'])
+		self.num_officers = int(request.form['num_members'])
 		self.off_names, self.off_phones, self.off_emails, self.off_pos = [], [], [], []
 		for i in range(self.num_officers):
 		
@@ -171,32 +171,28 @@ class OfficerForm:
 			if not (self.off_pos[i]):
 				error_message += "Missing officer " + str(i+1) + " position.\n"
 		#TODO: Check if valid email using regex, and possibly add other validation requirements
-		'''if not isinstance(self.num_officers, int):
-			error_message += ("Number of officers needs to be an integer, instead got " + self.num_officers + ".\n")
-		if not isinstance(self.num_advisors, int):
-			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
 
 		return error_message
 		
 class AdvisorForm:
 	
 	def __init__(self, request):
-		self.names, self.phones, self.emails, self.positions = [], [], [], []
-		self.num_advisors = int(len(request.form)/3) #Divide by the number of fields
+		self.num_advisors = int(request.form['num_members'])
+		self.adv_names, self.adv_phones, self.adv_emails = [], [], []
 		for i in range(self.num_advisors):
 		
-			self.names.append(request.form['name' + str(i)])
-			self.phones.append(request.form['phone' + str(i)] )
-			self.emails.append(request.form['email' + str(i)] )
+			self.adv_names.append(request.form['adv_name' + str(i)])
+			self.adv_phones.append(request.form['adv_phone' + str(i)] )
+			self.adv_emails.append(request.form['adv_email' + str(i)] )
 			
 	def validate(self):
 		error_message = ''
-		for i in range(self.num_officers):
-			if not (self.names[i]):
+		for i in range(self.num_advisors):
+			if not (self.adv_names[i]):
 				error_message += "Missing advisor " + str(i+1) + " name.\n"
-			if not (self.phones[i]):
+			if not (self.adv_phones[i]):
 				error_message += "Missing advisor " + str(i+1) + " phone.\n"
-			if not (self.emails[i]):
+			if not (self.adv_emails[i]):
 				error_message += "Missing advisor " + str(i+1) + " email.\n"
 		#TODO: Check if valid email using regex, and possibly add other validation requirements
 

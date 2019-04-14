@@ -121,14 +121,14 @@ function removeFieldset(e) {
     }
     
    //Decrement num_officer counter
-   var num_officer_ctr = document.getElementById("num_officers");
-   num_officer_ctr.value = parseInt(num_officer_ctr.value) - 1;
+   var num_member_ctr = document.getElementById("num_members");
+   num_member_ctr.value = parseInt(num_member_ctr.value) - 1;
 }
 
-function addOfficerFieldset(button) {
+function addMemberFieldset(button) {
 	var i = parseInt(button.id);
-	var container = document.getElementById("holder");
-	var form = document.getElementById("officer_form");
+	var container = button.parentNode;
+	var form = container.children[0];
 	var newForm = form.cloneNode(true);
 
     container.appendChild(newForm);
@@ -140,11 +140,13 @@ function addOfficerFieldset(button) {
     	inputs[i].name = name;
     	inputs[i].value = null;
     }
+    var removeButton = newForm.getElementsByTagName("button")[0];
+    removeButton.style = "position: absolute;right:10px;top:-5px;outline:5px solid #fff";
     
     //Increment the counter of the add button
     button.id = newid.toString();
     //Increment the counter of num_officers
-    var num_officer_ctr = document.getElementById("num_officers");
-    num_officer_ctr.value = newid +1;
+    var num_member_ctr = document.getElementById("num_members");
+    num_member_ctr.value = newid +1;
     
 }
