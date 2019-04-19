@@ -21,6 +21,26 @@ mydb = mysql.connector.connect(
 
 def homepage():
 	return render_template("homepage.html")
+	
+##########################################
+# Senate Login
+##########################################
+@app.route("/login", methods=['POST', 'GET'])
+
+def login():
+
+
+	if request.method == 'POST':
+		user = request.form['user']
+		password = request.form['password']
+		
+   
+		resp = make_response(render_template('readcookie.html'))
+		resp.set_cookie('userID', user)
+	
+	return render_template("senate_login.html")
+	
+
 
 ##########################################
 # The Recognition Form
@@ -132,18 +152,27 @@ def new_submission_rerec(ID):
 		else:
 			
 			mycursor = mydb.cursor()	
-			sql_update_query = """UPDATE organizations ORG_NAME= %s, ORG_ACR= %s, ORG_EMAIL= %s, TIER_REQUEST= %s, ORG_DESCRIPTION= %s, CONSTITUTION= %s, ORG_MEMBERS= %s, ORG_ATTENDING_MEMBERS= %s WHERE ORG_ID = %s"""
+			sql_update_query = """
+			UPDATE organizations
+			SET ORG_NAME=%s, ORG_ACR=%s, ORG_EMAIL=%s, TIER_REQUEST=%s, ORG_DESCRIPTION=%s, CONSTITUTION=%s, ORG_MEMBERS=%s,ORG_ATTENDING_MEMBERS=%s
+			WHERE ORG_ID = %s"""
 			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, ID)
 			mycursor.execute(sql_update_query, val)
 			mydb.commit()
 			
-			ID = mycursor.lastrowid #The ID for the last insert done by this cursor object
+			#ID = str(mycursor.lastrowid) #The ID for the last insert done by this cursor object
+			
+			sql_delete_query = "DELETE FROM officers WHERE ORG_ID = " + ID
+			mycursor.execute(sql_delete_query)
 			
 			sql_insert_query = """INSERT INTO officers (OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s, %s)"""
 			for i in range(form.num_officers):
 				val = (form.off_names[i], form.off_phones[i], form.off_emails[i], form.off_pos[i], ID, datetime.datetime.now().year)
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
+			
+			sql_delete_query = "DELETE FROM advisors WHERE ORG_ID = " + ID
+			mycursor.execute(sql_delete_query)
 			
 			sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID) VALUES (%s, %s, %s, %s)"""
 			for i in range(form.num_advisors):
@@ -259,21 +288,40 @@ def org_list():
 	cursor = mydb.cursor()
 	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER FROM organizations")
 	rows = cursor.fetchall()
-	names = []
-	ACRs = []
-	emails = []
-	IDS = []
-	tiers = []
+	names, ACRs, emails, IDs, tiers = [], [], [], [], []
 	
 	for row in rows:
 		name, ACR, email, ID, tier = row
 		names.append(name)
 		ACRs.append(ACR)
 		emails.append(email)
-		IDS.append(ID)
+		IDs.append(ID)
 		tiers.append(tier)
 
-	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDS, TIERS=tiers)
+	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
+	
+##########################################
+# Archives
+##########################################
+@app.route("/archives")
+@app.route("/archives/")
+def archives():
+	cursor = mydb.cursor()
+	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, TIER, CHANGE_DATE FROM archives")
+	rows = cursor.fetchall()
+	names, ACRs, emails, IDs, tiers, dates = [], [], [], [], [], []
+
+	
+	for row in rows:
+		name, ACR, email, ID, tier, date = row
+		names.append(name)
+		ACRs.append(ACR)
+		emails.append(email)
+		IDs.append(ID)
+		tiers.append(tier)
+		dates.append(date)
+
+	return render_template("archives.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, DATES=dates)
 
 		
 ##########################################
@@ -285,9 +333,9 @@ def org_page(ID):
 	
 	
 	#Check the database for this org
-	cursor = mydb.cursor()
-	cursor.execute("SELECT ORG_ID, ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL FROM organizations WHERE ORG_ID = " + str(ID))
-	rows = cursor.fetchall()
+	mycursor = mydb.cursor()
+	mycursor.execute("SELECT ORG_ID, ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL FROM organizations WHERE ORG_ID = " + str(ID))
+	rows = mycursor.fetchall()
 	
 	
 	
@@ -296,16 +344,17 @@ def org_page(ID):
 		abort(418)
 	
 	ID, name, ACR, desc, email = rows[0]
+	ID = str(ID)
 	
-	"""
-	ID = 315
-	name = "Testy McTestClub"
-	ACR = "McTestClub"
-	desc = "I'm a testing platform for Sawyer's template. If you see me in production, something's gone horribly wrong."
-	email = "test@testymctestclub.valpo.edu"
-	"""
+	sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	officer_list = mycursor.fetchall()
 	
-	return render_template("org_ind.html", ID=ID, NAME=name, ACR=ACR, DESC=desc, EMAIL=email)
+	sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	advisor_list = mycursor.fetchall()
+
+	return render_template("org_ind.html", ID=ID, NAME=name, ACR=ACR, DESC=desc, EMAIL=email, OFF_LIST=officer_list, ADV_LIST=advisor_list)
 	
 	
 	
