@@ -3,6 +3,21 @@
 	<head>
 	<title>{{NAME}}</title>
 		<link rel="stylesheet" href="/static/css/styles.css">
+		<style> th{ text-align: left; } </style>
+		<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #000000;
+  text-align: left;
+  padding: 8px;
+}
+
+</style>
 	</head>
 	<body>
 		<div id="header">
@@ -16,6 +31,42 @@
 			<!currently broken and under construction>
 			<p>Email: <a href="mailto:{{EMAIL}}" target="_top">{{EMAIL}}</a></p>
 		</div>
+		
+		<h2> Officers </h2>
+		<table style="width:50%">
+		  <tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+			<th>Position</th>
+		  </tr>
+		  {% for i in range(OFF_LIST|length) %}
+		  <tr>
+		    <td>{{ OFF_LIST[i][0] }}</td>
+		    <td>{{ OFF_LIST[i][2] }}</td>
+		    <td>{{ OFF_LIST[i][1] }}</td>
+		    <td>{{ OFF_LIST[i][3] }}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+		
+		<h2> Advisors </h2>
+		<table style="width:50%">
+		  <tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Phone</th>
+		  </tr>
+		  {% for i in range(ADV_LIST|length) %}
+		  <tr>
+		    <td>{{ ADV_LIST[i][0] }}</td>
+		    <td>{{ ADV_LIST[i][2] }}</td>
+		    <td>{{ ADV_LIST[i][1] }}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+		
+		
 	</body>
 	
 	<footer id="footer">
