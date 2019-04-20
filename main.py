@@ -1,10 +1,12 @@
-from flask import Flask, render_template, json, request, redirect, url_for, abort
-from forms import RerecForm, RecForm, OfficerForm, AdvisorForm
+from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response
+from forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
 import mysql.connector
 import datetime
 
 app = Flask("Sprint2")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Maybe prevents an issue with static files being cached in the browser, remove in final product
+app.secret_key = 'super secret key'
+app.config['SESSION_TYPE'] = 'filesystem'
 
 mydb = mysql.connector.connect(
   host="cs358.cis.valpo.edu",
@@ -13,6 +15,12 @@ mydb = mysql.connector.connect(
   database="senate"
 )
 
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+           ref_url.netloc == test_url.netloc
+
 ##########################################
 # The Homepage
 ##########################################
@@ -20,7 +28,9 @@ mydb = mysql.connector.connect(
 @app.route("/home")
 
 def homepage():
-	return render_template("homepage.html")
+	isSenate = request.cookies.get('userID') == 'senate'
+	
+	return render_template("homepage.html", LOGIN=isSenate)
 	
 ##########################################
 # Senate Login
@@ -28,20 +38,24 @@ def homepage():
 @app.route("/login", methods=['POST', 'GET'])
 
 def login():
-
-
-	if request.method == 'POST':
-		user = request.form['user']
-		password = request.form['password']
-		
-   
-		resp = make_response(render_template('readcookie.html'))
-		resp.set_cookie('userID', user)
 	
-	return render_template("senate_login.html")
+	if request.method == 'GET':
+		return render_template("senate_login.html")
+
+	else:
+		login = SenateLoginForm(request)
+		errors = login.validate()
+		if (errors):
+			return render_template("senate_login.html", ERRORS=errors)
+		else:
+			flash('Login successful.')
+			
+			resp = make_response(redirect("home"))
+			resp.set_cookie('userID', login.user)
+			
+			return resp
+
 	
-
-
 ##########################################
 # The Recognition Form
 ##########################################
@@ -70,8 +84,8 @@ def new_rec_submission():
 			mycursor = mydb.cursor()
 			#Insert org info to the database
 			sql = """INSERT INTO organizations (ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, 			 
-					 ORG_ATTENDING_MEMBERS) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-			val = (form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance)
+					 ORG_ATTENDING_MEMBERS, TIER_REQUEST) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+			val = (form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance, 'Unfunded')
 			mycursor.execute(sql, val)
 			mydb.commit()
 			
@@ -154,9 +168,9 @@ def new_submission_rerec(ID):
 			mycursor = mydb.cursor()	
 			sql_update_query = """
 			UPDATE organizations
-			SET ORG_NAME=%s, ORG_ACR=%s, ORG_EMAIL=%s, TIER_REQUEST=%s, ORG_DESCRIPTION=%s, CONSTITUTION=%s, ORG_MEMBERS=%s,ORG_ATTENDING_MEMBERS=%s
+			SET ORG_NAME=%s, ORG_ACR=%s, ORG_EMAIL=%s, TIER_REQUEST=%s, ORG_DESCRIPTION=%s, CONSTITUTION=%s, ORG_MEMBERS=%s,ORG_ATTENDING_MEMBERS=%s, APPROVAL_STATUS=%s
 			WHERE ORG_ID = %s"""
-			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, ID)
+			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, None, ID)
 			mycursor.execute(sql_update_query, val)
 			mydb.commit()
 			
@@ -282,24 +296,83 @@ def advisor_change(ID):
 ##########################################
 # The Org List
 ##########################################
-@app.route("/orgs")
 @app.route("/orgs/")
+@app.route("/orgs")
 def org_list():
+
 	cursor = mydb.cursor()
-	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER FROM organizations")
+	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER, TIER_REQUEST, APPROVAL_STATUS FROM organizations")
 	rows = cursor.fetchall()
-	names, ACRs, emails, IDs, tiers = [], [], [], [], []
+	names, ACRs, emails, IDs, tiers, tier_reqs, statuses = [], [], [], [], [], [], []
 	
 	for row in rows:
-		name, ACR, email, ID, tier = row
+		name, ACR, email, ID, tier, tier_req, status = row
 		names.append(name)
 		ACRs.append(ACR)
 		emails.append(email)
 		IDs.append(ID)
 		tiers.append(tier)
-
-	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
+		tier_reqs.append(tier_req)
+		statuses.append(status)
+		
 	
+	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
+			
+	
+##########################################
+# Org Approvals
+##########################################
+@app.route("/orgs-approval", methods=['POST', 'GET'])
+@app.route("/orgs-approval/", methods=['POST', 'GET'])
+def org_approval():
+
+	if request.method == 'GET':
+		cursor = mydb.cursor()
+		cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER, TIER_REQUEST, APPROVAL_STATUS FROM organizations")
+		rows = cursor.fetchall()
+		names, ACRs, emails, IDs, tiers, tier_reqs, statuses = [], [], [], [], [], [], []
+		
+		for row in rows:
+			name, ACR, email, ID, tier, tier_req, status = row
+			if not status: 
+				names.append(name)
+				ACRs.append(ACR)
+				emails.append(email)
+				IDs.append(ID)
+				tiers.append(tier)
+				tier_reqs.append(tier_req)
+				statuses.append(status)
+			
+		isSenate = request.cookies.get('userID') == 'senate'
+		
+		if isSenate:
+			return render_template("org_list_form.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, TIER_REQS=tier_reqs, STATUSES=statuses)
+			
+		else:
+			return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
+			
+	else:
+		mycursor = mydb.cursor()
+		org_statuses, org_IDs = [], []
+		for i in range(int(len(request.form)/2)):
+			org_statuses.append(request.form['status' + str(i)])
+			org_IDs.append(request.form['org_ID' + str(i)])
+			
+			if org_statuses[i] == 'accept':
+				sql = "UPDATE organizations SET CURRENT_TIER=TIER_REQUEST, TIER_REQUEST=NULL, APPROVAL_STATUS=TRUE WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql)
+				
+			elif org_statuses[i] == 'reject':
+				sql = "DELETE FROM organizations WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql)
+				
+			elif org_statuses[i] == 'reject_tier':
+				sql = "UPDATE organizations SET TIER_REQUEST=NULL, APPROVAL_STATUS=TRUE WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql)
+		mydb.commit()
+		
+		return(redirect('home'))
+		
 ##########################################
 # Archives
 ##########################################
@@ -309,7 +382,7 @@ def archives():
 	cursor = mydb.cursor()
 	cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, TIER, CHANGE_DATE FROM archives")
 	rows = cursor.fetchall()
-	names, ACRs, emails, IDs, tiers, dates = [], [], [], [], [], []
+	names, ACRs, emails, IDs, tiers, dates, years = [], [], [], [], [], [], []
 
 	
 	for row in rows:
@@ -320,8 +393,13 @@ def archives():
 		IDs.append(ID)
 		tiers.append(tier)
 		dates.append(date)
+		years.append(date.year)
+		
+	years = sorted(set(years))
+		
+	
 
-	return render_template("archives.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, DATES=dates)
+	return render_template("archives.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, DATES=dates, YEARS=years)
 
 		
 ##########################################

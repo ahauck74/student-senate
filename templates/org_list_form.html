@@ -4,8 +4,7 @@
 	<title>Valpo Student Organizations</title>
 	<link rel="stylesheet" href="/static/css/styles.css">
 	<script type="text/javascript" src="/static/js/table_sort.js"> </script>
-	<script type="text/javascript" src="/static/js/year_filter.js"> </script>
-	
+
 	<style> th{ text-align: left; } </style>
 </head>
 <body>
@@ -14,6 +13,7 @@
 		<a href="/home" target="_blank">Home</a>
 	</div>
 	
+	<form action = "/orgs-approval/" method = "POST">
 	<div>
 		<table style="width:100%" id="sort_table">
 		  <tr>
@@ -21,26 +21,32 @@
 		    <th onclick="sortTable(1)">Acronym</th>
 		    <th onclick="sortTable(2)">Contact Email</th>
 		    <th onclick="sortTable(3)">Tier</th> 
-		    <th onclick="sortTable(4)"> 
-		    	<select id="year">
-		    		{% for i in range(YEARS|length) %}
-					<option value="{{YEARS[i]}}">{{YEARS[i]}}</option>
-					{% endfor %}
-				</select>
-		    </th> 
+		    <th onclick="sortTable(3)">Tier Request</th>
+		    <th onclick="sortTable(4)">Approval Status</th> 
 		    
 		  </tr>
-		  {% for i in range(NAMES|length) %}
+		 {% for i in range(NAMES|length) %}
 		  <tr>
 		    <td><a href="/orgs/{{IDS[i]}}">{{ NAMES[i] }}</a></td>
 		    <td>{{ ACRS[i] }}</td>
 		    <td>{{EMAILS[i]}}</td>
 		    <td>{{TIERS[i]}}</td>
-		    <td>{{DATES[i].year}}</td>
+		    <td>{{TIER_REQS[i]}}</td>
+		    <td><select name="status{{i}}" class="form-control">
+		    	<option value="pending"> Pending </option>
+		    	<option value="reject"> Reject </option>
+		    	<option value="reject_tier"> Reject Tier Request </option>
+		    	<option value="accept"> Accept </option>
+		    </select>
+		    </td>
+		    <td><input id="org_ID" name="org_ID{{i}}" class="form-control" value="{{IDS[i]}}" type="hidden"> </input></td>
+		    
 		  </tr>
 		  {% endfor %}
 		</table>
 	</div>
+	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
+	</form>
 </body>
 
 <footer id="footer">

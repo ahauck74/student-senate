@@ -1,3 +1,18 @@
+class SenateLoginForm:
+
+	def __init__(self, request):
+		self.user = request.form['username']
+		self.password = request.form['password']
+		
+	def validate(self):
+		error_message = ''
+		if (self.user != 'senate' or self.password != '1234'):
+			error_message += "Error: Usesrname or password incorrect.\n"
+
+		if len(error_message) == 0:
+			return None;
+		return error_message
+
 class RecForm:
 	
 	def __init__(self, request):
@@ -88,7 +103,7 @@ class RerecForm:
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']
 		
-		self.num_officers = request.form['num_officers']
+		self.num_officers = int(request.form['num_officers'])
 		self.off_names, self.off_phones, self.off_emails, self.off_pos = [], [], [], []
 		for i in range(self.num_officers):
 		
@@ -97,7 +112,7 @@ class RerecForm:
 			self.off_emails.append(request.form['off_email' + str(i)] )
 			self.off_pos.append(request.form['off_pos' + str(i)] )
 		
-		self.num_advisors = request.form['num_advisors']
+		self.num_advisors = int(request.form['num_advisors'])
 		self.adv_names, self.adv_phones, self.adv_emails = [], [], []
 		for i in range(self.num_officers):
 		

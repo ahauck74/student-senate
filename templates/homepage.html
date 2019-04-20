@@ -16,6 +16,11 @@
 	<p><a href="/new-rerec">Click here to fill out the re-rec form.</a></p>
 	<p><a href="/new-rec">Click here to fill out the rec form.</a></p>
 	<p><a href="/off-adv-change-prompt">Click here to change officer or advisor information.</a></p>
+	{% if LOGIN %}
+	<p><a href="/orgs-approval">Click here to view pending organizations.</a></p>
+	{% else %}
+	<p><a href="/login">Click here to login as senate.</a></p>
+	{% endif %}
 	
 </body>
 <footer id="footer">
