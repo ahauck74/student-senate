@@ -54,7 +54,20 @@ def login():
 			resp.set_cookie('userID', login.user)
 			
 			return resp
+			
+##########################################
+# Senate Login
+##########################################
+@app.route("/logout")
 
+def logout():
+	
+	
+	resp = make_response(redirect("home"))
+	resp.set_cookie('userID', '', expires=0)
+	
+	return resp
+	
 	
 ##########################################
 # The Recognition Form
