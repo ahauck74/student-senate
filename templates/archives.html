@@ -6,7 +6,13 @@
 	<script type="text/javascript" src="/static/js/table_sort.js"> </script>
 	<script type="text/javascript" src="/static/js/year_filter.js"> </script>
 	
-	<style> th{ text-align: left; } </style>
+	<style> th{ text-align: left; } 
+			#table-scroll {
+			  height:150px;
+			  overflow:auto;  
+			  margin-top:20px;
+			}
+	</style>
 </head>
 <body>
 	<div id="header">
@@ -22,8 +28,8 @@
 		    <th onclick="sortTable(2)">Contact Email</th>
 		    <th onclick="sortTable(3)">Tier</th> 
 		    <th onclick="sortTable(4)"> 
-		    	<select id="year">
-		    		{% for i in range(YEARS|length) %}
+		    	<select id="year" onchange="yearFilter()" >
+		    		{% for i in range(YEARS|length)  %}
 					<option value="{{YEARS[i]}}">{{YEARS[i]}}</option>
 					{% endfor %}
 				</select>
@@ -31,7 +37,7 @@
 		    
 		  </tr>
 		  {% for i in range(NAMES|length) %}
-		  <tr>
+		  <tr style="">
 		    <td><a href="/orgs/{{IDS[i]}}">{{ NAMES[i] }}</a></td>
 		    <td>{{ ACRS[i] }}</td>
 		    <td>{{EMAILS[i]}}</td>
