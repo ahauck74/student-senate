@@ -98,7 +98,10 @@ class RerecForm:
 		self.org_acronym = request.form['acronym']
 		
 		self.change_tier = request.form['change_tier']#<y> or <n>
-		self.tier_dest = request.form['tier_destination']#<1>, <2>, <3>, or <null> for unfunded
+		if self.change_tier == 'n' : 
+			self.tier_dest = request.form['tier']#<1>, <2>, <3>, or <Unfunded>
+		else:
+			self.tier_dest = request.form['tier_destination']#<1>, <2>, <3>, or <Unfunded>
 		self.description = request.form['description']
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']

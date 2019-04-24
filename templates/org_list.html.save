@@ -1,0 +1,42 @@
+<! DOCTYPE html>
+<html>
+<head>
+	<title>Valpo Student Organizations</title>
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<script type="text/javascript" src="/static/js/table_sort.js"> </script>
+
+	<style> th{ text-align: left; } </style>
+</head>
+<body>
+	<div id="header">
+		<p>Valpo Student Organizations</p>
+		<a href="/home" target="_blank">Home</a>
+	</div>
+	
+	<div>
+		<table style="width:100%" id="sort_table">
+		  <tr>
+		    <th onclick="sortTable(0)">Name of Organization</th>
+		    <th onclick="sortTable(1)">Acronym</th>
+		    <th onclick="sortTable(2)">Contact Email</th>
+		    <th onclick="sortTable(3)">Tier</th> 
+		  </tr>
+		  {% for i in range(NAMES|length) %}
+		  <tr>
+		    <td><a href="/orgs/{{IDS[i]}}">{{ NAMES[i] }}</a></td>
+		    <td>{{ ACRS[i] }}</td>
+		    <td>{{EMAILS[i]}}</td>
+		    <td>{{TIERS[i]}}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+	</div>
+</body>
+
+<footer id="footer">
+	<div id="footer">
+		<p>&copy; Valparaiso University 2019, Valparaiso, IN 36383-6493, 219.464.5000 &#124; <a href="https://www.valpo.edu/copyright/" target="_blank">Privacy Policy</a></p>
+	<div class="clr"></div>
+	</div>
+</footer>
+</html>

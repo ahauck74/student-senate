@@ -2,14 +2,18 @@
 
 	<head>
 		<script type="text/javascript" src="/static/js/officer_advisor_fields.js"> </script>
+		<link rel="stylesheet" href="/static/css/styles.css">
+		<title>Re-Rec Form</title>
 	</head>
 	
    <body>
+   		<div id="header"> Organization Re-Recognition Form </div>
 <form action = "/new-rerec-submission/{{ID}}" method = "post">
     <fieldset>
         <h2>Re-recognition Form <br><small>This form is for Currently Recognized Student Organizations of Valparaiso University. To continue to be a university recognized student organization of Valparaiso University for Spring 2019 and Fall 2020 Organizations must complete this form by Friday February 1st. Those who fail to fill out this form will no longer be recognized by the University and hence forth be unable to reserve university spaces, receive funding from student senate etc. Please fill this form out with detail and to the fullest of your ability. Responses that the Student Senate Administration Committee deems to not be completed well enough will not be accepted. If you show effort and answer the questions with detail there will not be an issue.</small></h2>
     </fieldset>
 
+	<input id="id" name="id" class="form-control" value="{{ID}}" type="hidden"> </input>
 
     <!-- Field type: "short" id: "452929374" -->
     <fieldset>
@@ -44,7 +48,8 @@
 			<option value="y">Yes</option>
 	  </select>
     </fieldset>
-
+    
+    <input id="tier" name="tier" class="form-control" value="{{TIER}}" type="hidden"> </input>
 
     <!-- Field type: "short" id: "653058237" -->
     <fieldset>

@@ -1,13 +1,34 @@
 from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response
 from forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
+import email_test
 import mysql.connector
 import datetime
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message, Mail
+import os
 
 app = Flask("Sprint2")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Maybe prevents an issue with static files being cached in the browser, remove in final product
-app.secret_key = 'super secret key'
+app.config['SECRET_KEY'] = 'endgame'
+app.config['SECURITY_PASSWORD_SALT'] = 'luxury'
+app.config['MAIL_DEFAULT_SENDER'] = "weregoingupton@gmail.com"
+
+# mail settings
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+# gmail authentication
+app.config['MAIL_USERNAME'] = 'weregoingupton'
+app.config['MAIL_PASSWORD'] = 'Upton2016'
+
+
+#app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
 
+
+mail = Mail(app)
 mydb = mysql.connector.connect(
   host="cs358.cis.valpo.edu",
   user="senate",
@@ -20,6 +41,32 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and \
            ref_url.netloc == test_url.netloc
+           
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
+    
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    mail.send(msg)
 
 ##########################################
 # The Homepage
@@ -61,7 +108,6 @@ def login():
 @app.route("/logout")
 
 def logout():
-	
 	
 	resp = make_response(redirect("home"))
 	resp.set_cookie('userID', '', expires=0)
@@ -141,24 +187,54 @@ def who_rerec():
 		return render_template("org_selection_form.html", ORGS = names, IDS = IDs) 
 		
 	else:
+	
+	
 		mycursor = mydb.cursor()
-		sql = """SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS FROM organizations WHERE 
-		ORG_ID = '""" + str(request.form['org']) + "'" 
+		sql = """SELECT ORG_NAME, ORG_EMAIL FROM organizations WHERE ORG_ID = '""" + str(request.form['org']) + "'" 
 		mycursor.execute(sql)
-		fetch = mycursor.fetchall()
-		ID = str(fetch[0][3])
-		
-		sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
-		mycursor.execute(sql)
-		officer_list = mycursor.fetchall()
-		
-		sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
-		mycursor.execute(sql)
-		advisor_list = mycursor.fetchall()
-		
-		#TODO: Add officer/advisor info here, and make this cleaner.
-		return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3], DESC=fetch[0][4], CONSTITUTION=fetch[0][5], MEMBERS=fetch[0][6], ATTENDANCE=fetch[0][7], OFF_LIST = officer_list, ADV_LIST = advisor_list)
+		email = mycursor.fetchall()[0][1]
+		token = generate_confirmation_token(email)
+		confirm_url = url_for('confirm_email', token=token, _external=True)
+		html = render_template('email.html', confirm_url=confirm_url)
+		subject = "Please confirm your email"
+		send_email(email, subject, html)
+
+		flash('A confirmation email has been sent via email.', 'success')
+		return redirect('home')
 			
+		
+		
+##########################################
+# Email Verification
+##########################################
+			
+@app.route('/confirm/<token>')
+def confirm_email(token):
+	try:
+		email = confirm_token(token)
+	except:
+		flash('The confirmation link is invalid or has expired.', 'danger')
+
+
+
+	mycursor = mydb.cursor()
+	sql = """SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS, CURRENT_TIER FROM organizations WHERE 
+	ORG_EMAIL = '""" + str(email) + "'" 
+	mycursor.execute(sql)
+	fetch = mycursor.fetchall()
+	ID = str(fetch[0][3])
+	
+	sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	officer_list = mycursor.fetchall()
+	
+	sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	advisor_list = mycursor.fetchall()
+	
+	#TODO: Add officer/advisor info here, and make this cleaner.
+	return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3], DESC=fetch[0][4], CONSTITUTION=fetch[0][5], MEMBERS=fetch[0][6], ATTENDANCE=fetch[0][7], TIER=fetch[0][8], OFF_LIST = officer_list, ADV_LIST = advisor_list)
+	
 
 ##########################################
 # The Submit Button For the Re-Rec Form
@@ -207,7 +283,7 @@ def new_submission_rerec(ID):
 				mycursor.execute(sql_insert_query, val)
 			mydb.commit()
 			
-			return redirect('orgs/'+ str(ID))
+			return redirect('/orgs/'+ str(ID))
 			
 ####################################################
 # Org Select For The Advisor/Officer Change Prompt

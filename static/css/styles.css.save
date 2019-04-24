@@ -8,7 +8,7 @@
 	}
 	#header{
 		text-decoration:bold;
-		font:normal 30px/0.5em Arial;
+		font:normal 20px/0.5em Arial;
 		padding-top: 15px;
 		padding-bottom: 15px;
 		color: white;
@@ -23,7 +23,6 @@
 		bottom: 0;
 		position: fixed;
 		width:100%;
-		color: white;
 	}
 	#footer-inner{
 		margin:auto;
@@ -31,11 +30,11 @@
 		padding: 12px;
 		width: 922px;
 		color: white;
-		font-size: 15px;
 	}
 	#footer a{
 		color:white;
 		text-decoration:none;
+		font-size: 10px;
 	}
 	#footer a:hover{
 		color: #e3dac8;
