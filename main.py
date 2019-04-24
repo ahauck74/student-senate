@@ -205,7 +205,7 @@ def who_rerec():
 		
 		
 ##########################################
-# Email Verification
+# Email Verification for ReRec
 ##########################################
 			
 @app.route('/confirm/<token>')
@@ -310,26 +310,72 @@ def off_adv_change_prompt(ID=None):
 		
 	else:
 		mode = request.form['radAnswer'] #Either <officer> or <advisor>
-		ID = request.form['org'] #Gets the ID of the selected org
+		mycursor = mydb.cursor()
+		ID = str(request.form['org'])
+		sql = """SELECT ORG_NAME, ORG_EMAIL FROM organizations WHERE ORG_ID = '""" + ID + "'" 
+		mycursor.execute(sql)
+		email = mycursor.fetchall()[0][1]
+		token = generate_confirmation_token((email,ID))
 		if mode == 'officer':
-			mycursor = mydb.cursor()
-			sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
-			mycursor.execute(sql)
-			officer_list = mycursor.fetchall()
-			
-			#return str(fetch)
-			return render_template("officer_change_form.html", OFF_LIST=officer_list, ID=ID)
+			confirm_url = url_for('confirm_email_officer', token=token, _external=True)
 		
 		elif mode == 'advisor':
-			mycursor = mydb.cursor()
-			sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
-			mycursor.execute(sql)
-			advisor_list = mycursor.fetchall()
+			confirm_url = url_for('confirm_email_officer', token=token, _external=True)
 			
+		else:
+			return(redirect('off-adv-change-prompt'))	
+		
+		
+		confirm_url = url_for('confirm_email_officer', token=token, _external=True)
+		subject = "Link to " + str(mode) + " change form."
+		html = render_template('email.html', confirm_url=confirm_url)
+		send_email(email, subject, html)
+
+		flash('A confirmation email has been sent via email.', 'success')
+		return redirect('/home')
+		
+		
+##########################################
+# Email Verification for Officer
+##########################################
 			
-			return render_template("advisor_change_form.html", ADV_LIST=advisor_list, ID=ID)
+@app.route('/confirm-officer/<token>')
+def confirm_email_officer(token):
+	try:
+		email, ID = confirm_token(token)
+	except:
+		flash('The confirmation link is invalid or has expired.', 'danger')
+
+	mycursor = mydb.cursor()
+	sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	officer_list = mycursor.fetchall()
+	sql = """SELECT ORG_NAME, ORG_EMAIL FROM organizations WHERE ORG_ID = '""" + ID + "'" 
+	mycursor.execute(sql)
+	email = mycursor.fetchall()[0][1]
+	#return str(fetch)
+	return (render_template("officer_change_form.html", OFF_LIST=officer_list, ID=ID))
 
 
+##########################################
+# Email Verification for Advisor
+##########################################
+			
+@app.route('/confirm-advisor/<token>')
+def confirm_email_advisor(token):
+	try:
+		email, ID = confirm_token(token)
+	except:
+		flash('The confirmation link is invalid or has expired.', 'danger')
+
+	mycursor = mydb.cursor()
+	sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
+	mycursor.execute(sql)
+	advisor_list = mycursor.fetchall()
+	sql = """SELECT ORG_NAME, ORG_EMAIL FROM organizations WHERE ORG_ID = '""" + ID + "'" 
+	mycursor.execute(sql)
+	email = mycursor.fetchall()[0][1]
+	return (render_template("advisor_change_form.html", ADV_LIST=advisor_list, ID=ID))
 ##########################################
 # The Officer Change Form
 ##########################################
