@@ -6,11 +6,11 @@
 		<link rel="stylesheet" href="/static/css/styles.css">
 	</head>
 	
-   <body>
+   <body-no-foot>
    		<div id="header">
    			<p>New Organization Recognition Form</p>
    		</div>
-<form action = "http://cs358.cis.valpo.edu:5000/new-rec-submission" method = "post">
+<form action = "/new-rec-submission" method = "post">
     <fieldset>
         <h2>Recognition Form <br><small>This form is for currently unrecognized student organizations of Valparaiso University. In order to become a recognized student organization of Valparaiso University. Organizations must complete this form by February 1st. Those who fail to fill out this form will not be recognized by the University and henceforth be unable to reserve university spaces, receive funding from student senate, etc. Please fill this form out with detail and to the fullest of your ability. Responses that the Student Senate Administration Committee deems to not be completed well enough will not be accepted.</small></h2>
     </fieldset>
@@ -53,10 +53,8 @@
 
     <!-- Field type: "paragraph" id: "1956583147" -->
     <fieldset>
-        <legend for="1956583147">Please give a description of your organizations 5 most important events. (Fundraising, philanthropy, conferences, tournaments etc.)</legend>
-        <div class="form-group">
-            <textarea id="227861700" name="events" class="form-control" ></textarea>
-        </div>
+        <legend for="1956583147">Please upload your constitution. Accepted file types include docx, txt, and pdf.</legend>
+       <input type="file" id="const" name="const" class="form-control" accept="application/msword, .docx, text/plain, application.pdf">
     </fieldset>
 
 
@@ -142,5 +140,5 @@
     <input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
 </form>
 <p id="demo"></p>
- </body>
+ </body-no-foot>
 </html>

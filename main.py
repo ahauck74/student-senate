@@ -6,6 +6,7 @@ import datetime
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message, Mail
 import os
+import dateutil.parser
 
 app = Flask("Sprint2")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Maybe prevents an issue with static files being cached in the browser, remove in final product
@@ -21,7 +22,7 @@ app.config['MAIL_USE_SSL'] = True
 
 # gmail authentication
 app.config['MAIL_USERNAME'] = 'weregoingupton'
-app.config['MAIL_PASSWORD'] = 'Upton2016'
+app.config['MAIL_PASSWORD'] = 'Upton2019'
 
 
 #app.secret_key = 'super secret key'
@@ -30,7 +31,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 mail = Mail(app)
 mydb = mysql.connector.connect(
-  host="cs358.cis.valpo.edu",
+  host="vas.cis.valpo.edu",
   user="senate",
   password='358senate',
   database="senate"
@@ -68,6 +69,14 @@ def send_email(to, subject, template):
     )
     mail.send(msg)
 
+
+@app.template_filter('strftime')
+def _jinja2_filter_datetime(date, fmt=None):
+    date = dateutil.parser.parse(date)
+    native = date.replace(tzinfo=None)
+    format='%b %d, %Y'
+    return native.strftime(format) 
+
 ##########################################
 # The Homepage
 ##########################################
@@ -76,8 +85,40 @@ def send_email(to, subject, template):
 
 def homepage():
 	isSenate = request.cookies.get('userID') == 'senate'
+	mycursor = mydb.cursor()
+	sql = "SELECT deadline FROM deadlines"
+	mycursor.execute(sql)
+	deadline = mycursor.fetchall()
+	return render_template("homepage.html", LOGIN=isSenate, DEAD=deadline)
 	
-	return render_template("homepage.html", LOGIN=isSenate)
+	
+##########################################
+# The Deadline
+##########################################
+@app.route("/deadline-update", methods=["GET", "POST"])
+def deadline_update():
+	isSenate = request.cookies.get('userID') == 'senate'
+	if not isSenate:
+		return "Access Denied"
+		
+	if request.method == "GET":
+		mycursor = mydb.cursor()
+		sql = "SELECT deadline FROM deadlines"
+		mycursor.execute(sql)
+		deadline = mycursor.fetchall()[0][0].strftime("%Y-%m-%dT%H:%M:%S")
+		
+		return render_template("deadline_update.html", DEAD=deadline)
+	
+	else:
+		new_deadline = request.form['deadline']
+		#new_deadline = datetime.strptime(new_deadline, "%Y-%m-%dT%H:%M:%S")
+		mycursor = mydb.cursor()
+		#There is only one row in the table that can be updated. The LIMIT 1 makes it easy to access without an ID.
+		sql = "UPDATE deadlines SET deadline = " + '"' + new_deadline + '"' 
+		#return sql
+		mycursor.execute(sql)
+		
+	return redirect("/home")
 	
 ##########################################
 # Senate Login
@@ -143,8 +184,8 @@ def new_rec_submission():
 			mycursor = mydb.cursor()
 			#Insert org info to the database
 			sql = """INSERT INTO organizations (ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_DESCRIPTION, CONSTITUTION, ORG_MEMBERS, 			 
-					 ORG_ATTENDING_MEMBERS, TIER_REQUEST) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
-			val = (form.org_name, form.org_acronym, form.org_email, form.description, None, form.num_members, form.attendance, 'Unfunded')
+					 ORG_ATTENDING_MEMBERS, TIER_REQUEST, CHANGE_DATE) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+			val = (form.org_name, form.org_acronym, form.org_email, form.description, form.const, form.num_members, form.attendance, 'Unfunded', datetime.datetime.now())
 			mycursor.execute(sql, val)
 			mydb.commit()
 			
@@ -163,7 +204,7 @@ def new_rec_submission():
 			mydb.commit()
 			
 
-			return redirect('orgs/'+ str(ID))
+			return redirect('/orgs/'+ str(ID))
 
 ##########################################
 # The Rerec Form
@@ -231,8 +272,7 @@ def confirm_email(token):
 	sql = sql = 'SELECT ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL FROM advisors WHERE ORG_ID = ' + ID
 	mycursor.execute(sql)
 	advisor_list = mycursor.fetchall()
-	
-	#TODO: Add officer/advisor info here, and make this cleaner.
+	#return str(fetch[0][0])
 	return render_template("rerecognition_form.html", NAME=fetch[0][0], ACR=fetch[0][1], EMAIL=fetch[0][2], ID=fetch[0][3], DESC=fetch[0][4], CONSTITUTION=fetch[0][5], MEMBERS=fetch[0][6], ATTENDANCE=fetch[0][7], TIER=fetch[0][8], OFF_LIST = officer_list, ADV_LIST = advisor_list)
 	
 
@@ -243,7 +283,7 @@ def confirm_email(token):
 def new_submission_rerec(ID):
 	#If the user tries to access this page by means other than the submit button, they are redirected to the form
 	if request.method == "GET":
-		return render_template("rerecognition_form.html", ID=ID) 
+		return "Access Denied"
 		
 	
 	else:
@@ -257,9 +297,9 @@ def new_submission_rerec(ID):
 			mycursor = mydb.cursor()	
 			sql_update_query = """
 			UPDATE organizations
-			SET ORG_NAME=%s, ORG_ACR=%s, ORG_EMAIL=%s, TIER_REQUEST=%s, ORG_DESCRIPTION=%s, CONSTITUTION=%s, ORG_MEMBERS=%s,ORG_ATTENDING_MEMBERS=%s, APPROVAL_STATUS=%s
+			SET ORG_NAME=%s, ORG_ACR=%s, ORG_EMAIL=%s, TIER_REQUEST=%s, ORG_DESCRIPTION=%s, CONSTITUTION=%s, ORG_MEMBERS=%s,ORG_ATTENDING_MEMBERS=%s, APPROVAL_STATUS=%s, CHANGE_DATE=%s
 			WHERE ORG_ID = %s"""
-			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, None, form.num_members, form.attendance, None, ID)
+			val = (form.org_name, form.org_acronym, form.org_email, form.tier_dest, form.description, form.const, form.num_members, form.attendance, None, datetime.datetime.now(), ID)
 			mycursor.execute(sql_update_query, val)
 			mydb.commit()
 			
@@ -320,13 +360,12 @@ def off_adv_change_prompt(ID=None):
 			confirm_url = url_for('confirm_email_officer', token=token, _external=True)
 		
 		elif mode == 'advisor':
-			confirm_url = url_for('confirm_email_officer', token=token, _external=True)
+			confirm_url = url_for('confirm_email_advisor', token=token, _external=True)
 			
 		else:
 			return(redirect('off-adv-change-prompt'))	
 		
 		
-		confirm_url = url_for('confirm_email_officer', token=token, _external=True)
 		subject = "Link to " + str(mode) + " change form."
 		html = render_template('email.html', confirm_url=confirm_url)
 		send_email(email, subject, html)
@@ -399,7 +438,7 @@ def officer_change(ID):
 			mycursor.execute(sql_insert_query, val)
 		mydb.commit()
 
-	return redirect('orgs/'+ str(ID))
+	return redirect('/orgs/'+ str(ID))
 
 
 ##########################################
@@ -419,13 +458,13 @@ def advisor_change(ID):
 		
 		sql_delete_query = "DELETE FROM advisors WHERE ORG_ID = " + ID
 		mycursor.execute(sql_delete_query)
-		sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID, YEAR) VALUES (%s, %s, %s, %s, %s, %s)"""
+		sql_insert_query = """INSERT INTO advisors (ADVISOR_NAME, ADVISOR_PHONE, ADVISOR_EMAIL, ORG_ID) VALUES (%s, %s, %s, %s)"""
 		for i in range(form.num_advisors):
-			val = (form.adv_names[i], form.adv_phones[i], form.adv_emails[i], ID, datetime.datetime.now().year)
+			val = (form.adv_names[i], form.adv_phones[i], form.adv_emails[i], ID)
 			mycursor.execute(sql_insert_query, val)
 		mydb.commit()
 
-	return redirect('orgs/'+ str(ID))
+	return redirect('/orgs/'+ str(ID))
 	
 
 ##########################################
@@ -463,12 +502,12 @@ def org_approval():
 
 	if request.method == 'GET':
 		cursor = mydb.cursor()
-		cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER, TIER_REQUEST, APPROVAL_STATUS FROM organizations")
+		cursor.execute("SELECT ORG_NAME, ORG_ACR, ORG_EMAIL, ORG_ID, CURRENT_TIER, TIER_REQUEST, APPROVAL_STATUS, CHANGE_DATE FROM organizations")
 		rows = cursor.fetchall()
-		names, ACRs, emails, IDs, tiers, tier_reqs, statuses = [], [], [], [], [], [], []
+		names, ACRs, emails, IDs, tiers, tier_reqs, statuses, dates = [], [], [], [], [], [], [], []
 		
 		for row in rows:
-			name, ACR, email, ID, tier, tier_req, status = row
+			name, ACR, email, ID, tier, tier_req, status, date = row
 			if not status: 
 				names.append(name)
 				ACRs.append(ACR)
@@ -477,11 +516,15 @@ def org_approval():
 				tiers.append(tier)
 				tier_reqs.append(tier_req)
 				statuses.append(status)
+				dates.append(date)
+				
+		cursor.execute("SELECT deadline FROM deadlines")
+		deadline = cursor.fetchall()
 			
 		isSenate = request.cookies.get('userID') == 'senate'
 		
 		if isSenate:
-			return render_template("org_list_form.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, TIER_REQS=tier_reqs, STATUSES=statuses)
+			return render_template("org_list_form.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers, TIER_REQS=tier_reqs, STATUSES=statuses, DATES=dates, DEAD=deadline)
 			
 		else:
 			return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
@@ -506,7 +549,7 @@ def org_approval():
 				mycursor.execute(sql)
 		mydb.commit()
 		
-		return(redirect('home'))
+		return(redirect('/home'))
 		
 ##########################################
 # Archives
@@ -547,7 +590,7 @@ def org_page(ID):
 	
 	#Check the database for this org
 	mycursor = mydb.cursor()
-	mycursor.execute("SELECT ORG_ID, ORG_NAME, ORG_ACR, ORG_DESCRIPTION, ORG_EMAIL FROM organizations WHERE ORG_ID = " + str(ID))
+	mycursor.execute("SELECT ORG_ID, ORG_NAME, ORG_ACR, ORG_EMAIL, CURRENT_TIER, ORG_DESCRIPTION, ORG_MEMBERS, ORG_ATTENDING_MEMBERS, APPROVAL_STATUS FROM organizations WHERE ORG_ID = " + str(ID))
 	rows = mycursor.fetchall()
 	
 	
@@ -556,7 +599,7 @@ def org_page(ID):
 	if rows == []:
 		abort(418)
 	
-	ID, name, ACR, desc, email = rows[0]
+	ID, name, ACR, email, tier, desc, members, att_members, approval_status = rows[0]
 	ID = str(ID)
 	
 	sql = 'SELECT OFFICER_NAME, OFFICER_PHONE, OFFICER_EMAIL, TITLE FROM officers WHERE ORG_ID = ' + ID
@@ -567,7 +610,7 @@ def org_page(ID):
 	mycursor.execute(sql)
 	advisor_list = mycursor.fetchall()
 
-	return render_template("org_ind.html", ID=ID, NAME=name, ACR=ACR, DESC=desc, EMAIL=email, OFF_LIST=officer_list, ADV_LIST=advisor_list)
+	return render_template("org_ind.html", ID=ID, NAME=name, ACR=ACR, EMAIL=email, TIER=tier, DESC=desc, MEMBERS=members, ATT_MEMBERS=att_members, APPROVAL_STATUS=approval_status, OFF_LIST=officer_list, ADV_LIST=advisor_list)
 	
 	
 	

@@ -23,7 +23,7 @@ class RecForm:
 		self.tier = 'unfunded'
 		
 		self.description = request.form['description']
-		self.events = request.form['events']
+		self.const = request.form['const']
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']
 		
@@ -103,6 +103,8 @@ class RerecForm:
 		else:
 			self.tier_dest = request.form['tier_destination']#<1>, <2>, <3>, or <Unfunded>
 		self.description = request.form['description']
+		self.const = request.form['const']
+		
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']
 		

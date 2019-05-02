@@ -22,18 +22,23 @@ td, th {
 	<body>
 		<div id="header">
 			<p>{{NAME}}</p>
+		</div>
+		
+		<div id="links">
 			<p>
-				<a href="/home" target="_blank">Home</a>
-				<a href="/orgs" target="_blank">List of Orgs</a>
+				<a href="/home">Home</a>
+				<a href="/orgs">List of Orgs</a>
 			</p>
 		</div>
 		
 		<div id="body">
 			<p>Name: {{ NAME }}</p>
 			<p>Acronym: {{ ACR }}</p>
-			<p>Description: {{ DESC }}</p>
-			<!currently broken and under construction>
-			<p>Email: <a href="mailto:{{EMAIL}}" target="_top">{{EMAIL}}</a></p>
+			<p>Email: {{EMAIL}}</p>
+            <p>Description: {{ DESC }}</p>
+			<p>Organization Level: {{ TIER }}</p>
+			<p>Total Members: {{ MEMBERS }}
+			<br>Attending Members: {{ ATT_MEMBERS }}	</p>
 		</div>
 		
 		<h2> Officers </h2>

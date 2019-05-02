@@ -22,7 +22,8 @@
 		    <th onclick="sortTable(2)">Contact Email</th>
 		    <th onclick="sortTable(3)">Tier</th> 
 		    <th onclick="sortTable(3)">Tier Request</th>
-		    <th onclick="sortTable(4)">Approval Status</th> 
+		    <th onclick="sortTable(4)">Request Date</th>
+		    <th onclick="sortTable(5)">Approval Status</th> 
 		    
 		  </tr>
 		 {% for i in range(NAMES|length) %}
@@ -32,13 +33,15 @@
 		    <td>{{EMAILS[i]}}</td>
 		    <td>{{TIERS[i]}}</td>
 		    <td>{{TIER_REQS[i]}}</td>
+		    <td {% if DATES[i] > DEAD[0][0] %} style="color:red" {% endif %}>{{DATES[i].strftime("%m/%d/%Y, %I:%M %p")}}</td>
 		    <td><select name="status{{i}}" class="form-control">
 		    	<option value="pending"> Pending </option>
-		    	<option value="reject"> Reject </option>
+		    	<option value="reject"> Deny Org Recognition </option>
 		    	<option value="reject_tier"> Reject Tier Request </option>
-		    	<option value="accept"> Accept </option>
+		    	<option value="accept"> Accept Request(s)  </option>
 		    </select>
 		    </td>
+		    
 		    <td><input id="org_ID" name="org_ID{{i}}" class="form-control" value="{{IDS[i]}}" type="hidden"> </input></td>
 		    
 		  </tr>

@@ -1,0 +1,30 @@
+<! DOCTYPE html>
+<html>
+<head>
+	<title>Update Deadline</title>
+	<link rel="stylesheet" href="/static/css/styles.css">
+	<script type="text/javascript" src="/static/js/table_sort.js"> </script>
+
+	<style> th{ text-align: left; } </style>
+</head>
+<body>
+	<div id="header">
+		<p>Valpo Student Organizations</p>
+		<a href="/home" target="_blank">Home</a>
+	</div>
+	
+	<form action = "/deadline-update" method = "POST">
+	<div>
+		<input type="datetime-local" name='deadline' value={{DEAD}}> </input>
+	</div>
+	<input class="btn btn-primary" name = "submit_button" type="submit" value="Submit">
+	</form>
+</body>
+
+<footer id="footer">
+	<div id="footer">
+		<p>&copy; Valparaiso University 2019, Valparaiso, IN 36383-6493, 219.464.5000 &#124; <a href="https://www.valpo.edu/copyright/" target="_blank">Privacy Policy</a></p>
+	<div class="clr"></div>
+	</div>
+</footer>
+</html>
