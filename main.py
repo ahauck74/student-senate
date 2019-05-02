@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response
+from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response, send_file
 from forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
 import email_test
 import mysql.connector
@@ -76,6 +76,12 @@ def _jinja2_filter_datetime(date, fmt=None):
     native = date.replace(tzinfo=None)
     format='%b %d, %Y'
     return native.strftime(format) 
+    
+
+def write_file(data, filename):
+    with open(filename, 'wb') as f:
+        f.write(data)
+        
 
 ##########################################
 # The Homepage
@@ -611,6 +617,25 @@ def org_page(ID):
 	advisor_list = mycursor.fetchall()
 
 	return render_template("org_ind.html", ID=ID, NAME=name, ACR=ACR, EMAIL=email, TIER=tier, DESC=desc, MEMBERS=members, ATT_MEMBERS=att_members, APPROVAL_STATUS=approval_status, OFF_LIST=officer_list, ADV_LIST=advisor_list)
+
+
+##########################################
+# Constitution Download
+##########################################
+@app.route('/return-files/<ID>')
+def download(ID):
+
+	mycursor = mydb.cursor()
+	mycursor.execute("SELECT ORG_NAME, CONSTITUTION FROM organizations WHERE ORG_ID = " + str(ID))
+	rows = mycursor.fetchall()
+	name, blob = rows[0]
+	write_file(blob, "static/" + str(name) + ".txt")
+	
+	try:
+		return send_file("static/" + str(name) + ".txt", str(name) + ".txt")
+		os.remove("static/" + str(name) + ".txt")
+	except Exception as e:
+		return str(e)
 	
 	
 	

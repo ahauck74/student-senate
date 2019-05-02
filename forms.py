@@ -23,7 +23,8 @@ class RecForm:
 		self.tier = 'unfunded'
 		
 		self.description = request.form['description']
-		self.const = request.form['const']
+		self.const_file = request.files['const'].filename
+		self.const = request.files['const'].read()
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']
 		
@@ -60,7 +61,8 @@ class RecForm:
 			error_message += ("Number of officers needs to be an integer, instead got " + self.num_officers + ".\n")
 		if not isinstance(self.num_advisors, int):
 			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
-			
+		if not (self.const_file.endswith(".txt")):
+			error_message += "Expected .txt file, got " + self.const_file + "\n"
 		for i in range(self.num_officers):
 			if not (self.off_names[i]):
 				error_message += "Missing officer " + str(i+1) + " name.\n"
@@ -103,7 +105,8 @@ class RerecForm:
 		else:
 			self.tier_dest = request.form['tier_destination']#<1>, <2>, <3>, or <Unfunded>
 		self.description = request.form['description']
-		self.const = request.form['const']
+		self.const_file = request.files['const'].filename
+		self.const = request.files['const'].read()
 		
 		self.attendance = request.form['reg_attendance']
 		self.num_members = request.form['members_total']
@@ -143,6 +146,8 @@ class RerecForm:
 			error_message += ("Number of advisors needs to be an integer, instead got " + self.num_advisors + ".\n")'''
 		if (self.change_tier == 'y' and not self.tier_dest):
 			error_message += "Missing tier destination. Please select a tier or set change tier to no.\n"
+		if not (self.const_file.endswith(".txt")):
+			error_message += "Expected .txt file, got " + self.const_file + "\n"
 		for i in range(self.num_officers):
 			if not (self.off_names[i]):
 				error_message += "Missing officer " + str(i+1) + " name.\n"
