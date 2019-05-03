@@ -1,0 +1,18 @@
+Unit one was an introduction
+to the wonderful generating function.
+We used them to count
+a generalized amount
+and we added relations in conjunction.
+
+Unit two made relations equivalent
+and switching functions had me ambivalent.
+Then Burnside's Lemma
+was quite the dilemma,
+but its applications to generating functions were magnificent.
+
+Unit three began with some matching,
+and we learned about LaTeX formatting.
+Then Philip Hall
+had Nicky enthralled,
+but the generating functions were lacking.
+

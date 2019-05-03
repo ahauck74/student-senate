@@ -10,7 +10,10 @@
 <body>
 	<div id="header">
 		<p>Valpo Student Organizations</p>
-		<a href="/home" target="_blank">Home</a>
+	</div>
+	
+	<div id="links">
+		<a href="/home">Home</a>
 	</div>
 	
 	<form action = "/orgs-approval/" method = "POST">
@@ -35,10 +38,15 @@
 		    <td>{{TIER_REQS[i]}}</td>
 		    <td {% if DATES[i] > DEAD[0][0] %} style="color:red" {% endif %}>{{DATES[i].strftime("%m/%d/%Y, %I:%M %p")}}</td>
 		    <td><select name="status{{i}}" class="form-control">
+		    	{% if STATUSES[i] %}
+		    	<option value="nothing"> Recognized </option>
+		    	<option value="delete"> Delete Organization </option>
+		    	{% else %}
 		    	<option value="pending"> Pending </option>
 		    	<option value="reject"> Deny Org Recognition </option>
 		    	<option value="reject_tier"> Reject Tier Request </option>
 		    	<option value="accept"> Accept Request(s)  </option>
+		    	{% endif %}
 		    </select>
 		    </td>
 		    

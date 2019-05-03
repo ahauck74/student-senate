@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response, send_file
+from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response, send_file, after_this_request
 from forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
 import email_test
 import mysql.connector
@@ -487,13 +487,14 @@ def org_list():
 	
 	for row in rows:
 		name, ACR, email, ID, tier, tier_req, status = row
-		names.append(name)
-		ACRs.append(ACR)
-		emails.append(email)
-		IDs.append(ID)
-		tiers.append(tier)
-		tier_reqs.append(tier_req)
-		statuses.append(status)
+		if status:
+			names.append(name)
+			ACRs.append(ACR)
+			emails.append(email)
+			IDs.append(ID)
+			tiers.append(tier)
+			tier_reqs.append(tier_req)
+			statuses.append(status)
 		
 	
 	return render_template("org_list.html", NAMES=names, ACRS=ACRs, EMAILS=emails, IDS=IDs, TIERS=tiers)
@@ -514,15 +515,15 @@ def org_approval():
 		
 		for row in rows:
 			name, ACR, email, ID, tier, tier_req, status, date = row
-			if not status: 
-				names.append(name)
-				ACRs.append(ACR)
-				emails.append(email)
-				IDs.append(ID)
-				tiers.append(tier)
-				tier_reqs.append(tier_req)
-				statuses.append(status)
-				dates.append(date)
+			#if not status: 
+			names.append(name)
+			ACRs.append(ACR)
+			emails.append(email)
+			IDs.append(ID)
+			tiers.append(tier)
+			tier_reqs.append(tier_req)
+			statuses.append(status)
+			dates.append(date)
 				
 		cursor.execute("SELECT deadline FROM deadlines")
 		deadline = cursor.fetchall()
@@ -547,12 +548,26 @@ def org_approval():
 				mycursor.execute(sql)
 				
 			elif org_statuses[i] == 'reject':
+				sql_delete_query = "DELETE FROM officers WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql_delete_query)
+				sql_delete_query = "DELETE FROM advisors WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql_delete_query)
+				sql = "DELETE FROM organizations WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql)
+			
+			elif org_statuses[i] == 'delete':
+				sql_delete_query = "DELETE FROM officers WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql_delete_query)
+				sql_delete_query = "DELETE FROM advisors WHERE ORG_ID = " + str(org_IDs[i])
+				mycursor.execute(sql_delete_query)
 				sql = "DELETE FROM organizations WHERE ORG_ID = " + str(org_IDs[i])
 				mycursor.execute(sql)
 				
 			elif org_statuses[i] == 'reject_tier':
 				sql = "UPDATE organizations SET TIER_REQUEST=NULL, APPROVAL_STATUS=TRUE WHERE ORG_ID = " + str(org_IDs[i])
 				mycursor.execute(sql)
+			
+			
 		mydb.commit()
 		
 		return(redirect('/home'))
@@ -630,13 +645,18 @@ def download(ID):
 	rows = mycursor.fetchall()
 	name, blob = rows[0]
 	write_file(blob, "static/" + str(name) + ".txt")
-	
-	try:
-		return send_file("static/" + str(name) + ".txt", str(name) + ".txt")
-		os.remove("static/" + str(name) + ".txt")
-	except Exception as e:
-		return str(e)
-	
+	f= open("static/" + str(name) + ".txt","r")
+	lines = f.read()
+	@after_this_request
+	def remove_file(response):
+		try:
+			os.remove(f)
+			
+			f.close()
+		except Exception as error:
+			app.logger.error("Error removing or closing downloaded file handle", error)
+		return response
+	return str(lines)
 	
 	
 
