@@ -1,12 +1,13 @@
-from flask import Flask, render_template, json, request, redirect, url_for, abort, flash, make_response, send_file, after_this_request
-from forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
-import email_test
-import mysql.connector
 import datetime
-from itsdangerous import URLSafeTimedSerializer
-from flask_mail import Message, Mail
 import os
+
 import dateutil.parser
+import mysql.connector
+from flask import Flask, render_template, request, redirect, url_for, abort, flash, make_response, after_this_request
+from flask_mail import Message, Mail
+from itsdangerous import URLSafeTimedSerializer
+
+from old_flask.forms import RerecForm, RecForm, OfficerForm, AdvisorForm, SenateLoginForm
 
 app = Flask("Sprint2")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 #Maybe prevents an issue with static files being cached in the browser, remove in final product

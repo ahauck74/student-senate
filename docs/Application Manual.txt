@@ -1,0 +1,22 @@
+﻿Recognition Form - No verification is needed to fill out a recognition form. After the form is submitted, the organization will be added to pending orgs list viewable with a Senate login. Upon recognition the organization’s tier will be set to Unfunded.
+
+
+ReRecognition Form - To fill out a ReRecognition form, the user must have access to the organization email address they provided in their most recent form. From the website they request a ReRecognition form for their organization, and an email with a link to the form is sent to their org email. The Rerecognition form offers the organization the option to request a tier change. Upon completion of the form, it will be sent to the pending orgs list.
+
+
+Officer/Advisor Change Form - Like the ReRecognition form, this form requires email verification to access. However, Officer and Advisor information may be changed freely without approval from Student Senate. An approved organization that makes an officer or advisor change through this form will not lose its approval status. 
+
+
+Current Organizations List - This list is publicly available and contains all the orgs that are currently recognized. The name of the organization functions as a link to their page where additional information is available. Clicking on the column headers allows the user to sort or reverse sort by that column. 
+
+
+Archives of Organizations - This is a comprehensive list of all outdated forms and requests. Whenever an organization is updated (ReRecognition or Officer/Advisor Change) or deleted (See Pending Organizations List), the form will be stored in the archives. In the current version of the product, only the following are viewable in the archives: name, acronym, email, change date, and tier. 
+
+
+Deadline Change - With a Senate Login, the user may change the soft deadline for Recognition and ReRecognition form submission. If this deadline is passed users may still submit these forms, but they will be marked as late on the pending organizations list. Users can see the deadline from the homepage.
+
+
+Pending Organizations - From this list Senate is able to perform actions on currently recognized organizations as well as pending organizations. Any organization whose last form submission was after the set deadline will have its date in red text. Senate has the option to delete recognized organizations at their discretion, but be warned as this cannot be undone. For pending organizations there are three options:
+* Deny Org Recognition - this option deletes new organization requests, but in the case of ReRecognition this option reverts the organization to its previous version.
+* Reject Tier Request - this option accepts all changes the organization has requested except for their request tier. Their tier is set to whatever is was before. Warning: as I am writing this I have realized that selecting this option for new organization requests leaves their tier as None rather than unfunded. 
+* Accept Request(s) - this option accepts the recognition request as well as tier change requests if any were made
