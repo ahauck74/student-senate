@@ -1,3 +1,8 @@
+This repository holds the group project for my software design and development course. Many features such as user login/vereification were rushed or unfinished the project remains to be tested. The aim of the project was to learn and understand the software development cycle firsthand, from desing to deployment (maintenance becomes someone else's problem, so I guess we get to learn that part later in life!). 
+
+There are many things I'd like to change and improve upon in this project if it would ever becocme a priority, for example I had never used Flask before so I just dove right in and created a monotlithic file of Flask backend code that really ought to be separted into various helpers, config files, etc...
+
+=====================
 Student-Senate v1.0.0
 Release notes
 =====================
